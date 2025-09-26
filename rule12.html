@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RULE12</title>
+  <style>
+:root{--bg:#0f1115;--card:#171a21;--text:#eaeef5;--muted:#9aa3b2;--row:#222836;}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+h1{margin:0 0 8px;font-size:1.4rem}
+.card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 6px 24px rgba(0,0,0,.25);margin-bottom:12px}
+label{font-size:.95rem;color:var(--muted);display:block;margin-bottom:6px}
+input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a2f3a;background:#0e1117;color:var(--text);box-sizing:border-box}
+.qbtn{padding:8px 10px;border-radius:10px;border:1px solid #2a2f3a;background:#10131a;color:var(--text);cursor:pointer;flex:0 0 auto}
+
+.table{overflow:auto;border-radius:12px;border:1px solid var(--row)}
+.table-title{padding:8px 12px;text-align:center;color:var(--muted);font-weight:600;border-bottom:1px solid var(--row)}
+.row{display:grid;grid-template-columns:repeat(2,minmax(160px,1fr));gap:6px;align-items:center}
+.row.header{font-weight:600;color:var(--muted);position:sticky;top:0;background:var(--card);z-index:1}
+.row div{padding:12px;border-bottom:1px solid var(--row);white-space:nowrap}
+.row:last-child div{border-bottom:none}
+.mono{font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.left{text-align:left}
+.right{text-align:right}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#10131a;border:1px solid #2a2f3a;font-size:.85rem}
+.info{display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:.95rem;margin-top:8px}
+.bag{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bag-item{display:flex;justify-content:space-between;border:1px solid #2a2f3a;border-radius:10px;padding:8px 10px;background:#10131a}
+.minihelp{color:#9aa3b2;font-size:.9rem;margin-top:6px}
+
+/* Menu layout: left = Total Distance; right = settings */
+.menu-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:8px;align-items:stretch}
+.right-grid{display:grid;grid-template-columns:1fr;gap:8px}
+.quickbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+@media (max-width:520px){ .menu-grid{grid-template-columns:1fr 1fr} }
+@media (min-width:1100px){ .right-grid{grid-template-columns:1fr 1fr} }
+
+/* Side highlight heat map */
+.cell{position:relative;overflow:hidden}
+.cell::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:10px;
+  background: var(--col,transparent);
+  border-right:1px solid rgba(255,255,255,.06);
+}
+
+/* Palette from 5i upward (4i removed) */
+.c5  { --col:#ff6b2c; }  /* 5i red-orange */
+.c6  { --col:#f39c12; }  /* 6i orange */
+.c7  { --col:#f1c40f; }  /* 7i yellow-orange */
+.c8  { --col:#ffea00; }  /* 8i yellow */
+.c9  { --col:#9acd32; }  /* 9i yellow-green */
+.c10 { --col:#2ecc71; }  /* PW green */
+.c11 { --col:#2bb3b8; }  /* UW blue-green */
+.c12 { --col:#1e90ff; }  /* SW blue */
+.c13 { --col:#6f42c1; }  /* LW blue-violet */
+.c14 { --col:#a445ed; }  /* LW+ violet */
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>RULE12</h1>
+
+  <div class="card">
+    <div class="menu-grid">
+      <!-- Left: Total Distance -->
+      <div class="field">
+          <label for="total">Total Distance</label>
+          <input id="total" type="number" inputmode="decimal" min="1" step="1" value="20" aria-label="Total Distance">
+        <div class="quickbar">
+          <button class="qbtn" data-a="5">5</button>
+          <button class="qbtn" data-a="10">10</button>
+          <button class="qbtn" data-a="15">15</button>
+          <button class="qbtn" data-a="20">20</button>
+          <button class="qbtn" data-a="25">25</button>
+          <button class="qbtn" data-a="30">30</button>
+        </div>
+      </div>
+
+      <!-- Right: Units, Speed, Inc, Rounding -->
+      <div class="right-grid">
+        <div class="field">
+            <label for="unit">Distance Unit</label>
+            <select id="unit" title="Select distance unit" aria-label="Distance Unit">
+              <option value="yards">Yards</option>
+              <option value="feet">Feet</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="speed">Green Speed</label>
+            <select id="speed" title="Select green speed" aria-label="Green Speed">
+              <option value="fast" selected>fast (Rule of 13)</option>
+              <option value="normal">normal (Rule of 12)</option>
+              <option value="slow">slow (Rule of 11)</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="inc">Landing Increment</label>
+            <select id="inc" title="Select landing increment" aria-label="Landing Increment">
+              <option value="1">1</option>
+              <option value="0.5">0.5</option>
+              <option value="0.25">0.25</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="rounding">Club Rounding</label>
+            <select id="rounding" title="Select club rounding" aria-label="Club Rounding">
+              <option value="round" selected>Nearest</option>
+              <option value="floor">Always Lower</option>
+              <option value="ceil">Always Higher</option>
+            </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card table">
+    <div class="table-title">Landing Zone</div>
+    <div class="row header">
+      <div class="left">Chip Club</div>
+      <div class="left">Lob Club</div>
+    </div>
+    <div id="rows"></div>
+  </div>
+
+  <div class="card">
+    <div class="mono" style="color:#9aa3b2;margin-bottom:8px;">Club mapping (number • abbrev • loft):</div>
+    <div class="bag">
+      <div class="bag-item"><span>5 — 5i</span><span>~24–27°</span></div>
+      <div class="bag-item"><span>6 — 6i</span><span>~28–31°</span></div>
+      <div class="bag-item"><span>7 — 7i</span><span>~32–35°</span></div>
+      <div class="bag-item"><span>8 — 8i</span><span>~36–39°</span></div>
+      <div class="bag-item"><span>9 — 9i</span><span>~39–41°</span></div>
+      <div class="bag-item"><span>10 — PW</span><span>~43–46°</span></div>
+      <div class="bag-item"><span>11 — UW</span><span>~48–50°</span></div>
+      <div class="bag-item"><span>12 — SW</span><span>~54–56°</span></div>
+      <div class="bag-item"><span>13 — LW</span><span>~58–60°</span></div>
+      <div class="bag-item"><span>13+ — LW+</span><span>60°+</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// === JS ===
+const CLUB_NAME = {5:'5i',6:'6i',7:'7i',8:'8i',9:'9i',10:'PW',11:'UW',12:'SW',13:'LW',14:'LW+'};
+function clampClub(n){ return Math.max(5, Math.min(14, n)); } // min 5i now
+function displayClubNum(n){ return n > 13 ? '13+' : String(n); }
+function roundBy(x, mode){ if(mode==='floor') return Math.floor(x); if(mode==='ceil') return Math.ceil(x); return Math.round(x); }
+
+// Speed→Rule: fast->13, normal->12, slow->11
+const SPEEDS = { fast:{label:'fast', base:13}, normal:{label:'normal', base:12}, slow:{label:'slow', base:11} };
+function clubFromRule(D, speedKey, mode){
+  const base = SPEEDS[speedKey].base;
+  const raw = roundBy(base - D, mode);
+  const num = clampClub(raw);
+  return {clubNum:num, clubName: CLUB_NAME[num], base, raw};
+}
+function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
+
+(function(){
+  const totalEl=document.getElementById('total'),
+        unitEl=document.getElementById('unit'),
+        incEl=document.getElementById('inc'),
+        roundingEl=document.getElementById('rounding'),
+        speedEl=document.getElementById('speed'),
+        rowsEl=document.getElementById('rows');
+
+  function build(){
+    const A=parseFloat(totalEl.value||'0'),
+          step=parseFloat(incEl.value||'1'),
+          mode=roundingEl.value,
+          speedKey=speedEl.value;
+    rowsEl.innerHTML=''; if(!A||A<=0||!step||step<=0) return;
+    const half=Math.floor((A/2)/step)*step,
+          unitLabel=unitEl.value==='feet'?'ft':'yd';
+
+    for(let B=step; B<=half+1e-9; B+=step){
+      const C=A-B;
+      const D=C/B;  // roll/landing for chip
+      const clubChip = clubFromRule(D, speedKey, mode);
+
+      const chipClass = `cell right mono c${clubChip.clubNum}`;
+      const lobClass  = `cell right mono c13`; // fixed 13-LW
+
+      const row=document.createElement('div'); row.className='row';
+      row.innerHTML = `
+        <div class="${chipClass}">${fmt(B, step%1?2:0)} ${unitLabel} — <span class="badge">${displayClubNum(clubChip.clubNum)}-${clubChip.clubName}</span></div>
+        <div class="${lobClass}">${fmt(C, step%1?2:0)} ${unitLabel} — <span class="badge">13-LW</span></div>`;
+      rowsEl.appendChild(row);
+    }
+  }
+
+  [totalEl, unitEl, incEl, roundingEl, speedEl].forEach(e=>e.addEventListener('input', build));
+  document.querySelectorAll('.qbtn').forEach(b=>b.addEventListener('click', ()=>{ totalEl.value=b.dataset.a; build(); }));
+  build();
+})();
+</script>
+</body>
+</html>
