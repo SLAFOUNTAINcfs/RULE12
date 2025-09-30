@@ -87,9 +87,11 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
         <div class="field">
             <label for="speed">Green Speed</label>
             <select id="speed" title="Select green speed" aria-label="Green Speed">
-              <option value="fast" selected>fast (Rule of 13)</option>
-              <option value="normal">normal (Rule of 12)</option>
-              <option value="slow">slow (Rule of 11)</option>
+            <option value="veryfast">very fast (Rule of 14)</option>
+            <option value="fast">fast (Rule of 13)</option>
+            <option value="normal" selected>normal (Rule of 12)</option>
+            <option value="slow">slow (Rule of 11)</option>
+            <option value="veryslow">very slow (Rule of 10)</option>
             </select>
         </div>
         <div class="field">
@@ -145,8 +147,14 @@ function clampClub(n){ return Math.max(5, Math.min(14, n)); } // min 5i now
 function displayClubNum(n){ return n > 13 ? '13+' : String(n); }
 function roundBy(x, mode){ if(mode==='floor') return Math.floor(x); if(mode==='ceil') return Math.ceil(x); return Math.round(x); }
 
-// Speed→Rule: fast->13, normal->12, slow->11
-const SPEEDS = { fast:{label:'fast', base:13}, normal:{label:'normal', base:12}, slow:{label:'slow', base:11} };
+// Speed→Rule: veryfast->14, fast->13, normal->12, slow->11, veryslow->10
+const SPEEDS = {
+  veryfast: {label:'very fast', base:14},
+  fast:    {label:'fast',      base:13},
+  normal:  {label:'normal',    base:12},
+  slow:    {label:'slow',      base:11},
+  veryslow:{label:'very slow', base:10}
+};
 function clubFromRule(D, speedKey, mode){
   const base = SPEEDS[speedKey].base;
   const raw = roundBy(base - D, mode);
