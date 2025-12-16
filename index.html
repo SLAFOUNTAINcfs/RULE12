@@ -93,6 +93,13 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
 </head>
 <body>
 <div class="wrap">
+    <div class="card" style="margin-bottom:16px">
+      <label for="toolMode">Select Tool</label>
+      <select id="toolMode" aria-label="Select Tool">
+        <option value="landing">Landing Zone Calculator</option>
+        <option value="handicap">Handicap Calculator (WHS)</option>
+      </select>
+    </div>
   <div class="header-flex">
     <h1 class="header-title">RULE12 – The Paul Runyan Method</h1>
     <a class="info-link" href="https://en.wikipedia.org/wiki/Paul_Runyan" target="_blank" rel="noopener" title="Learn more about Paul Runyan's method">
@@ -155,13 +162,42 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
     </div>
   </div>
 
-  <div class="card table">
+  <div class="card table" id="landingCard">
     <div class="table-title">Landing Zone</div>
     <div class="row header">
       <div class="left">Chip Club</div>
       <div class="left">Lob Club</div>
     </div>
     <div id="rows"></div>
+  </div>
+
+  <div class="card" id="handicapCard" style="display:none">
+    <div class="table-title">WHS Handicap Calculator</div>
+    <form id="handicapForm" autocomplete="off">
+      <div class="field">
+        <label for="handicapIndex">Handicap Index</label>
+        <input id="handicapIndex" type="number" step="0.1" min="-10" max="54" placeholder="e.g. 12.3">
+      </div>
+      <div class="field">
+        <label for="slopeRating">Slope Rating</label>
+        <input id="slopeRating" type="number" step="1" min="55" max="155" placeholder="e.g. 125">
+      </div>
+      <div class="field">
+        <label for="courseRating">Course Rating</label>
+        <input id="courseRating" type="number" step="0.1" min="60" max="80" placeholder="e.g. 71.2">
+      </div>
+      <div class="field">
+        <label for="par">Par</label>
+        <input id="par" type="number" step="1" min="60" max="80" placeholder="e.g. 72">
+      </div>
+      <div class="field">
+        <label for="pcc">Playing Conditions Calculation (PCC, optional)</label>
+        <input id="pcc" type="number" step="1" min="-3" max="3" placeholder="e.g. 0">
+      </div>
+      <button type="submit" class="qbtn" style="margin-top:10px">Calculate Course Handicap</button>
+    </form>
+    <div id="handicapResult" class="minihelp" style="margin-top:10px"></div>
+    <div class="minihelp" style="margin-top:8px">Formula: <br>Course Handicap = (Handicap Index × Slope Rating / 113) + (Course Rating − Par) [+ PCC]</div>
   </div>
 
   <div class="card">
@@ -205,6 +241,45 @@ function clubFromRule(D, speedKey, mode){
 function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
 
 (function(){
+    // --- Tool Mode Switch ---
+    const toolModeEl = document.getElementById('toolMode');
+    const landingCard = document.getElementById('landingCard');
+    const handicapCard = document.getElementById('handicapCard');
+    if(toolModeEl && landingCard && handicapCard) {
+      toolModeEl.addEventListener('change', function() {
+        if(this.value === 'landing') {
+          landingCard.style.display = '';
+          handicapCard.style.display = 'none';
+        } else {
+          landingCard.style.display = 'none';
+          handicapCard.style.display = '';
+        }
+      });
+    }
+
+    // --- Handicap Calculator ---
+    const handicapForm = document.getElementById('handicapForm');
+    const handicapResult = document.getElementById('handicapResult');
+    if(handicapForm && handicapResult) {
+      handicapForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Get values
+        const idx = parseFloat(document.getElementById('handicapIndex').value);
+        const slope = parseFloat(document.getElementById('slopeRating').value);
+        const cr = parseFloat(document.getElementById('courseRating').value);
+        const par = parseFloat(document.getElementById('par').value);
+        const pccRaw = document.getElementById('pcc').value;
+        const pcc = pccRaw === '' ? 0 : parseFloat(pccRaw);
+        // Validate
+        if(!isFinite(idx) || !isFinite(slope) || !isFinite(cr) || !isFinite(par)) {
+          handicapResult.textContent = 'Please fill in all required fields.';
+          return;
+        }
+        // WHS formula
+        const courseHandicap = (idx * slope / 113) + (cr - par) + pcc;
+        handicapResult.innerHTML = `<b>Course Handicap:</b> <span class="badge">${Math.round(courseHandicap)}</span>`;
+      });
+    }
   const totalEl=document.getElementById('total'),
         unitEl=document.getElementById('unit'),
         incEl=document.getElementById('inc'),
