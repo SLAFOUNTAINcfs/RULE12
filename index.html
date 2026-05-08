@@ -98,6 +98,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
       <select id="toolMode" aria-label="Select Tool">
         <option value="landing">Landing Zone Calculator</option>
         <option value="handicap">Handicap Calculator (WHS)</option>
+        <option value="sg">Strokes Gained GPS Tracker</option>
       </select>
     </div>
   <div class="header-flex">
@@ -107,7 +108,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
     </a>
   </div>
 
-  <div class="card">
+  <div class="card" id="landingControlsCard">
     <div class="menu-grid">
       <!-- Left: Total Distance -->
       <div class="field">
@@ -200,7 +201,71 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
     <div class="minihelp" style="margin-top:8px">Formula: <br>Course Handicap = (Handicap Index × Slope Rating / 113) + (Course Rating − Par) [+ PCC]</div>
   </div>
 
-  <div class="card">
+
+
+  <div class="card" id="sgCard" style="display:none">
+    <div class="table-title">Strokes Gained GPS Tracker</div>
+    <div class="field">
+      <label for="sgBenchmark">Benchmark</label>
+      <select id="sgBenchmark">
+        <option value="pga" selected>PGA Tour Baseline</option>
+        <option value="10hcp">10 Handicap Baseline</option>
+        <option value="20hcp">20 Handicap Baseline</option>
+      </select>
+    </div>
+    <div class="row">
+      <div><label for="sgHolePar">Hole Par</label><input id="sgHolePar" type="number" min="3" max="6" step="1" value="4"></div>
+      <div><label for="sgShotType">Shot Type</label><select id="sgShotType"><option value="drive">Drive</option><option value="approach" selected>Approach</option><option value="putt">Putt</option></select></div>
+    </div>
+    <div class="row">
+      <div><label for="sgRuleMode">Rule Mode</label><select id="sgRuleMode"><option value="12" selected>Rule of 12 (Normal)</option><option value="14">Rule of 14 (Very Fast)</option><option value="13">Rule of 13 (Fast)</option><option value="11">Rule of 11 (Slow)</option><option value="10">Rule of 10 (Very Slow)</option></select></div>
+      <div><label for="sgClubChoice">Club Selection</label><select id="sgClubChoice"><option value="auto" selected>Auto from Rule</option><option>5i</option><option>6i</option><option>7i</option><option>8i</option><option>9i</option><option>PW</option><option>UW</option><option>SW</option><option>LW</option><option>LW+</option></select></div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="sgLieStart">Start Lie</label>
+        <select id="sgLieStart">
+          <option value="tee">Tee</option><option value="fairway" selected>Fairway</option><option value="rough">Rough</option><option value="sand">Bunker</option><option value="green">Green</option>
+        </select>
+      </div>
+      <div>
+        <label for="sgLieEnd">End Lie</label>
+        <select id="sgLieEnd">
+          <option value="fairway" selected>Fairway</option><option value="rough">Rough</option><option value="sand">Bunker</option><option value="green">Green</option><option value="holed">Holed</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="sgStartDist">Start Distance (yards)</label>
+        <input id="sgStartDist" type="number" min="0" step="0.1" placeholder="e.g. 420">
+      </div>
+      <div>
+        <label for="sgEndDist">End Distance (yards)</label>
+        <input id="sgEndDist" type="number" min="0" step="0.1" placeholder="e.g. 165">
+      </div>
+    </div>
+    <div class="quickbar" style="margin-top:10px">
+      <button class="qbtn" id="lockPinBtn" type="button">Lock Flag Location</button>
+      <button class="qbtn" id="useGpsBtn" type="button">Update Distance from GPS</button>
+      <button class="qbtn" id="calcSgBtn" type="button">Calculate Shot SG</button>
+      <button class="qbtn" id="addShotBtn" type="button">Save Shot</button>
+      <button class="qbtn" id="resetHoleBtn" type="button">Reset Hole</button>
+    </div>
+    <div id="sgStatus" class="minihelp"></div>
+    <div class="info">
+      <span id="sgShotOut" class="badge">Shot SG: —</span>
+      <span id="sgHoleOut" class="badge">Hole SG: 0.00</span>
+      <span id="sgTargetOut" class="badge">Next-shot target: —</span>
+      <span id="sgCountsOut" class="badge">Drive: 0 | Approach: 0 | Putt: 0</span>
+      <span id="sgClubOut" class="badge">Suggested club: —</span>
+    </div>
+    <div class="minihelp">Set your start distance, take the shot, then set end distance and Save Shot. Use Lock Flag Location once near the pin location to keep live GPS yardage updated while you play.</div>
+  </div>
+
+
+  <details class="card" id="clubMappingCard">
+    <summary class="mono club-mapping-title" style="cursor:pointer">Club mapping (tap to expand)</summary>
     <div class="mono club-mapping-title">Club mapping (number • abbrev • loft):</div>
     <div class="bag">
       <div class="bag-item"><span>5 — 5i</span><span>~24–27°</span></div>
@@ -214,7 +279,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
       <div class="bag-item"><span>13 — LW</span><span>~58–60°</span></div>
       <div class="bag-item"><span>13+ — LW+</span><span>60°+</span></div>
     </div>
-  </div>
+  </details>
 </div>
 
 <script>
@@ -244,15 +309,18 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     // --- Tool Mode Switch ---
     const toolModeEl = document.getElementById('toolMode');
     const landingCard = document.getElementById('landingCard');
+    const landingControlsCard = document.getElementById('landingControlsCard');
+    const clubMappingCard = document.getElementById('clubMappingCard');
     const handicapCard = document.getElementById('handicapCard');
-    if(toolModeEl && landingCard && handicapCard) {
+    const sgCard = document.getElementById('sgCard');
+    if(toolModeEl && landingCard && handicapCard && sgCard && landingControlsCard && clubMappingCard) {
       toolModeEl.addEventListener('change', function() {
         if(this.value === 'landing') {
-          landingCard.style.display = '';
-          handicapCard.style.display = 'none';
+          landingCard.style.display = ''; landingControlsCard.style.display=''; clubMappingCard.style.display=''; handicapCard.style.display = 'none'; sgCard.style.display='none';
+        } else if(this.value === 'handicap') {
+          landingCard.style.display = 'none'; landingControlsCard.style.display='none'; clubMappingCard.style.display='none'; handicapCard.style.display = ''; sgCard.style.display='none';
         } else {
-          landingCard.style.display = 'none';
-          handicapCard.style.display = '';
+          landingCard.style.display = 'none'; landingControlsCard.style.display='none'; clubMappingCard.style.display=''; handicapCard.style.display = 'none'; sgCard.style.display='';
         }
       });
     }
@@ -280,6 +348,96 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
         handicapResult.innerHTML = `<b>Course Handicap:</b> <span class="badge">${Math.round(courseHandicap)}</span>`;
       });
     }
+
+  // --- Strokes Gained Tracker ---
+  const SG_BASELINES = {
+    pga:{tee:4.2,fairway:3.05,rough:3.35,sand:3.6,green:1.95},
+    '10hcp':{tee:4.6,fairway:3.45,rough:3.75,sand:3.95,green:2.05},
+    '20hcp':{tee:5.1,fairway:3.95,rough:4.3,sand:4.5,green:2.2}
+  };
+  function expectedStrokes(dist, lie, bench){
+    if(lie==='holed' || dist<=0) return 0;
+    const b = SG_BASELINES[bench][lie] ?? SG_BASELINES[bench].fairway;
+    if(lie==='green') return Math.max(1, 1 + 0.015*dist);
+    return Math.max(1, b + 0.0045*dist);
+  }
+  function yardsBetween(a,b){
+    const R=6371000, toRad=v=>v*Math.PI/180;
+    const dLat=toRad(b.lat-a.lat), dLon=toRad(b.lon-a.lon);
+    const x=Math.sin(dLat/2)**2 + Math.cos(toRad(a.lat))*Math.cos(toRad(b.lat))*Math.sin(dLon/2)**2;
+    return (2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))) * 1.09361;
+  }
+  const sgEls = {
+    benchmark: document.getElementById('sgBenchmark'), shotType: document.getElementById('sgShotType'), holePar: document.getElementById('sgHolePar'),
+    lieStart: document.getElementById('sgLieStart'), lieEnd: document.getElementById('sgLieEnd'), startDist: document.getElementById('sgStartDist'),
+    endDist: document.getElementById('sgEndDist'), lockPinBtn: document.getElementById('lockPinBtn'), useGpsBtn: document.getElementById('useGpsBtn'),
+    calcBtn: document.getElementById('calcSgBtn'), addBtn: document.getElementById('addShotBtn'), resetBtn: document.getElementById('resetHoleBtn'),
+    status: document.getElementById('sgStatus'), shotOut: document.getElementById('sgShotOut'), holeOut: document.getElementById('sgHoleOut'),
+    targetOut: document.getElementById('sgTargetOut'), countsOut: document.getElementById('sgCountsOut'), ruleMode: document.getElementById('sgRuleMode'), clubChoice: document.getElementById('sgClubChoice'), clubOut: document.getElementById('sgClubOut')
+  };
+  let currentShotSG = null, holeSG = 0, pinLoc = null;
+  const shotCounts = {drive:0, approach:0, putt:0};
+  function updateCounts(){ sgEls.countsOut.textContent = `Drive: ${shotCounts.drive} | Approach: ${shotCounts.approach} | Putt: ${shotCounts.putt}`; }
+  function updateTarget(){
+    const startDist = parseFloat(sgEls.startDist.value||'0');
+    const eStart = expectedStrokes(startDist, sgEls.lieStart.value, sgEls.benchmark.value);
+    const needed = eStart + holeSG - 1;
+    sgEls.targetOut.textContent = `Next-shot target E(end) ≤ ${needed.toFixed(2)} (${needed<=0?'hole out now': 'for SG ≥ 0'})`;
+  }
+  function calcShot(){
+    const s = parseFloat(sgEls.startDist.value), e = parseFloat(sgEls.endDist.value||'0');
+    if(!isFinite(s) || s<0){ sgEls.status.textContent='Enter a valid start distance.'; return; }
+    const eStart = expectedStrokes(s, sgEls.lieStart.value, sgEls.benchmark.value);
+    const eEnd = sgEls.lieEnd.value==='holed' ? 0 : expectedStrokes(e, sgEls.lieEnd.value, sgEls.benchmark.value);
+    currentShotSG = eStart - eEnd - 1;
+    sgEls.shotOut.textContent = `Shot SG: ${currentShotSG>=0?'+':''}${currentShotSG.toFixed(2)}`;
+    sgEls.status.textContent = `E(start): ${eStart.toFixed(2)} | E(end): ${eEnd.toFixed(2)}`;
+    updateTarget();
+    suggestClub();
+  }
+
+  function suggestClub(){
+    const choice = sgEls.clubChoice.value;
+    if(choice !== 'auto'){ sgEls.clubOut.textContent = `Suggested club: ${choice} (manual)`; return; }
+    const s = parseFloat(sgEls.startDist.value||'0'), e = parseFloat(sgEls.endDist.value||'0');
+    const carry = Math.max(1, s-e);
+    const base = parseInt(sgEls.ruleMode.value||'12',10);
+    const roll = Math.max(1,e);
+    const D = roll / Math.max(1, carry);
+    const raw = Math.round(base - D);
+    const n = Math.max(5, Math.min(14, raw));
+    sgEls.clubOut.textContent = `Suggested club: ${displayClubNum(n)}-${CLUB_NAME[n]} (${sgEls.ruleMode.options[sgEls.ruleMode.selectedIndex].text})`;
+  }
+  function capturePosition(cb, errMsg){
+    if(!navigator.geolocation){ sgEls.status.textContent='GPS not supported on this device/browser.'; return; }
+    navigator.geolocation.getCurrentPosition(cb, ()=> sgEls.status.textContent=errMsg, {enableHighAccuracy:true, timeout:10000});
+  }
+  sgEls.lockPinBtn?.addEventListener('click', ()=> capturePosition((pos)=>{ pinLoc = {lat:pos.coords.latitude, lon:pos.coords.longitude}; sgEls.status.textContent='Flag locked. Now use Update Distance from GPS after each shot.'; }, 'Could not lock flag location.'));
+  sgEls.useGpsBtn?.addEventListener('click', ()=> capturePosition((pos)=>{
+    if(!pinLoc){ sgEls.status.textContent='Lock flag location first.'; return; }
+    const cur = {lat:pos.coords.latitude, lon:pos.coords.longitude};
+    const yards = yardsBetween(cur,pinLoc);
+    sgEls.startDist.value = yards.toFixed(1);
+    updateTarget();
+    sgEls.status.textContent = `Updated start distance: ${yards.toFixed(1)} yd (GPS accuracy ±${(pos.coords.accuracy*1.09361).toFixed(1)} yd).`;
+  }, 'Could not update GPS distance.'));
+  sgEls.calcBtn?.addEventListener('click', calcShot);
+  sgEls.addBtn?.addEventListener('click', ()=>{
+    if(currentShotSG===null){ calcShot(); if(currentShotSG===null) return; }
+    const typ = sgEls.shotType.value; shotCounts[typ] = (shotCounts[typ]||0)+1; updateCounts();
+    holeSG += currentShotSG;
+    sgEls.holeOut.textContent=`Hole SG: ${holeSG>=0?'+':''}${holeSG.toFixed(2)}`;
+    currentShotSG = null; sgEls.shotOut.textContent='Shot SG: —';
+    sgEls.startDist.value = sgEls.endDist.value || sgEls.startDist.value;
+    if(typ==='drive') sgEls.shotType.value='approach';
+    if(sgEls.lieEnd.value==='green') sgEls.shotType.value='putt';
+    sgEls.lieStart.value = sgEls.lieEnd.value==='holed' ? 'green' : sgEls.lieEnd.value;
+    updateTarget();
+  });
+  sgEls.resetBtn?.addEventListener('click', ()=>{ holeSG=0; currentShotSG=null; pinLoc=null; shotCounts.drive=0; shotCounts.approach=0; shotCounts.putt=0; updateCounts(); sgEls.holeOut.textContent='Hole SG: 0.00'; sgEls.shotOut.textContent='Shot SG: —'; sgEls.status.textContent='Hole reset.'; updateTarget(); });
+  ;['input','change'].forEach(evt=>[sgEls.startDist,sgEls.endDist,sgEls.lieStart,sgEls.benchmark,sgEls.ruleMode,sgEls.clubChoice].forEach(el=>el?.addEventListener(evt, ()=>{ updateTarget(); suggestClub(); })));
+  updateCounts();
+  suggestClub();
   const totalEl=document.getElementById('total'),
         unitEl=document.getElementById('unit'),
         incEl=document.getElementById('inc'),
