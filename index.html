@@ -1,78 +1,119 @@
-<!doctype html>
-<html lang="en"><head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/jpeg" href="favicon.jpeg">
-  <title>RULE12</title>
-  <!--
-    Info: Paul Runyan's Chipping Technique
-    This app is based on the method developed by Paul Runyan.
-    Technique highlights:
-    - Hit with an iron using a "one-lever" putting-like stroke (no wrist action)
-    - Set up with the club's toe on the ground for a low, rolling ball flight
-    - Nearly vertical shaft, choke down on the grip
-    - Ball back in stance, weight forward
-    - One-armed, shoulder-driven motion for a simple, rhythmic swing
-    Credit: Paul Runyan, master short game teacher
-  -->
-  <style>
-:root{--bg:#0f1115;--card:#171a21;--text:#eaeef5;--muted:#9aa3b2;--row:#222836;}
-/* Header and info icon styles */
-.header-flex {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.header-title {
-  margin: 0;
-}
-.info-link {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
-}
-.info-icon {
-  vertical-align: middle;
-}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-.wrap{max-width:980px;margin:0 auto;padding:16px}
-h1{margin:0 0 8px;font-size:1.4rem}
-.card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 6px 24px rgba(0,0,0,.25);margin-bottom:12px}
-label{font-size:.95rem;color:var(--muted);display:block;margin-bottom:6px}
-input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a2f3a;background:#0e1117;color:var(--text);box-sizing:border-box}
-.qbtn{padding:8px 10px;border-radius:10px;border:1px solid #2a2f3a;background:#10131a;color:var(--text);cursor:pointer;flex:0 0 auto}
 
-.table{overflow:auto;border-radius:12px;border:1px solid var(--row)}
-.table-title{padding:8px 12px;text-align:center;color:var(--muted);font-weight:600;border-bottom:1px solid var(--row)}
-.row{display:grid;grid-template-columns:repeat(2,minmax(160px,1fr));gap:6px;align-items:center}
-.row.header{font-weight:600;color:var(--muted);position:sticky;top:0;background:var(--card);z-index:1}
-.row div{padding:12px;border-bottom:1px solid var(--row);white-space:nowrap}
-.row:last-child div{border-bottom:none}
-.mono{font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.left{text-align:left}
-.right{text-align:right}
-.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#10131a;border:1px solid #2a2f3a;font-size:.85rem}
-.info{display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:.95rem;margin-top:8px}
-.bag{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.bag-item{display:flex;justify-content:space-between;border:1px solid #2a2f3a;border-radius:10px;padding:8px 10px;background:#10131a}
-.minihelp{color:#9aa3b2;font-size:.9rem;margin-top:6px}
+Create strokes gained application with GPS
+May 8
+·
+RULE12
+·
+…reate-strokes-gained-application-with-gps-o9uube
+·
++166
+-8
 
-/* Menu layout: left = Total Distance; right = settings */
-.menu-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:8px;align-items:stretch}
-.right-grid{display:grid;grid-template-columns:1fr;gap:8px}
-.quickbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-@media (max-width:520px){ .menu-grid{grid-template-columns:1fr 1fr} }
-@media (min-width:1100px){ .right-grid{grid-template-columns:1fr 1fr} }
+Archive
 
-/* Side highlight heat map */
-.cell{position:relative;overflow:hidden}
-.cell::before{
-  content:""; position:absolute; left:0; top:0; bottom:0; width:10px;
-  background: var(--col,transparent);
-  border-right:1px solid rgba(255,255,255,.06);
-}
+Share
+View PR
 
+
+I need an application that is easy to use on strokes gained base on the current hole distance. 
+I would like to be able to use gps in order to get the current strokes per hole while I am playing a hole. I want to be able to set a target that will get me back to 0 strokes gained or better. 
+The math behind Strokes Gained (SG) measures performance by comparing a player's actual scoring to a benchmark average (usually PGA Tour pros) from the exact same starting and ending positions. It evaluates the efficiency of every shot in moving the ball closer to the hole.The Core FormulaThe fundamental formula for calculating strokes gained for a single shot is:\(\text{Strokes\ Gained}=\text{E}_{\text{start}}-\text{E}_{\text{end}}-1\)\(\text{E}_{\text{start}}\) (Expected Strokes to Hole Out): The average number of strokes a pro takes to finish from where the shot started.\(\text{E}_{\text{end}}\) (Expected Strokes to Hole Out): The average number of strokes a pro takes to finish from where the ball landed.\(1\): The single stroke taken to make the shot.Example:Start: You are in the fairway 150 yards out. Average shots to hole out: 2.9.Shot: You hit the ball to 20 feet from the hole.End: Average shots to hole out from 20 feet: 1.8.Math: \((2.9 - 1.8) - 1 = \mathbf{+0.1}\) (You gained 0.1 strokes on the field).Key Components of the MathPositive vs. Negative: A positive number means you performed better than the average (gained strokes), while a negative number means you performed worse (lost strokes).The Baseline: The "benchmark" is usually derived from historical data (like PGA Tour ShotLink) based on distance to the pin, lie type (fairway, rough, bunker), and hole difficulty.Total Strokes Gained: The sum of all individual shot SG values for a round.Sub-Category BreakdownStrokes Gained is broken down into four key areas to identify specific strengths and weaknesses:Off-the-Tee (OTT): (PGA Average for hole) - (Avg left after drive) - 1.Approach-the-Green (APP): (PGA Avg from start) - (PGA Avg from landing spot) - 1.Around-the-Green (ARG): Similar to approach, focusing on chips/putts < 50 yards.Putting: (Your # of Putts) - (PGA Avg putts from that distance).Note: For amateurs, apps often substitute the "PGA Tour" benchmark with a similar-handicap benchmark (e.g., 10-handicap) to provide more relevant comparisons.
+Copy
+Summary
+Added a new tool mode option, “Strokes Gained GPS Tracker”, so users can switch between Landing Zone, Handicap, and SG workflows in one app. 
+
+Implemented a new SG tracker card UI with:
+
+benchmark selection (PGA / 10 hcp / 20 hcp),
+
+start/end lie selectors,
+
+start/end distance inputs,
+
+controls for calculating shot SG, adding shot SG to hole total, resetting hole, and GPS helper action. 
+
+Added strokes gained math logic for per-shot SG and per-hole SG accumulation using your formula pattern SG = E(start) - E(end) - 1, plus a dynamic next-shot target indicator to get back to 0 SG or better. 
+
+Added a GPS helper flow via navigator.geolocation to get location lock and report horizontal accuracy guidance while on-course. 
+
+Testing
+
+✅ python - <<'PY'\nfrom pathlib import Path\ns=Path('index.html').read_text()\njs=s.split('<script>')[1].split('</script>')[0]\nPath('/tmp/app.js').write_text(js)\nPY\nnode --check /tmp/app.js
+
+✅ git status --short
+
+✅ git add index.html && git commit -m "Add strokes gained GPS tracker mode"
+
+
+File (1)
+does this change based on drive distance, approach distance and putting? I would like to have a set starting point, then I take the shot and have it set to the shot taken. Drive, Approach and number of approach attempts. I would also like to lock the flag location in so it updates showing me the target to keep the shots gained at 0 or better.
+Copy
+Summary
+Updated the Strokes Gained tool so it now supports the exact shot flow you requested: Drive / Approach / Putt, with a manual start point and then “save shot” progression to the next shot state. 
+
+Added shot-type counters for Drive, Approach, and Putt so you can track number of approach attempts and shot distribution on each hole. 
+
+Added flag lock GPS mode:
+
+Lock Flag Location stores pin coordinates.
+
+Update Distance from GPS computes your live distance-to-pin in yards from your current location and updates the SG start distance automatically. 
+
+Kept SG target guidance live so you can see the next-shot target needed to stay at 0 SG or better based on current state. 
+
+Preserved existing multi-tool behavior (Landing Zone, Handicap, SG tracker) under the mode switch. 
+
+Testing
+
+✅ python - <<'PY'\nfrom pathlib import Path\ns=Path('index.html').read_text(); Path('/tmp/app.js').write_text(s.split('<script>')[1].split('</script>')[0])\nPY\nnode --check /tmp/app.js
+
+✅ git add index.html && git commit --amend --no-edit
+
+
+File (1)
+this is what I see when on the strokes gained calculator. 
+Select Tool\n\nStrokes Gained GPS Tracker\nRULE12 – The Paul Runyan Method\nDistance to Pin!\n20\n5\n10\n15\n20\n25\n30\nDistance Unit\n\nYards\nGreen Speed\n\nnormal (Rule of 12)\nLanding Increment\n\n1\nClub Rounding\n\nNearest\nStrokes Gained GPS Tracker\nBenchmark\n\n10 Handicap Baseline\nHole Par\n4\nShot Type\n\nApproach\nStart Lie\n\nFairway\nEnd Lie\n\nGreen\nStart Distance (yards)\n260\nEnd Distance (yards)\n6\nLock Flag Location\nUpdate Distance from GPS\nCalculate Shot SG\nSave Shot\nReset Hole\nE(start): 4.62 | E(end): 1.09\nShot SG: +2.53\nHole SG: -5.80\nNext-shot target E(end) ≤ -2.18 (hole out now)\nDrive: 1 | Approach: 0 | Putt: 0\nSet your start distance, take the shot, then set end distance and Save Shot. Use Lock Flag Location once near the pin location to keep live GPS yardage updated while you play.\nClub mapping (number • abbrev • loft):\n5 — 5i\n~24–27°\n6 — 6i\n~28–31°\n7 — 7i\n~32–35°\n8 — 8i\n~36–39°\n9 — 9i\n~39–41°\n10 — PW\n~43–46°\n11 — UW\n~48–50°\n12 — SW\n~54–56°\n13 — LW\n~58–60°\n13+ — LW+\n60°+
+
+
+Can we keep the rule of 12 on that drop down and have the club list on a drop down of its own?
+Copy
+Summary
+Updated the view logic so when you select Strokes Gained, the landing-only controls (Distance to Pin, Green Speed, etc.) are hidden, making the SG screen much cleaner. 
+
+Kept Rule of 12 available directly in SG mode via a dedicated Rule Mode dropdown (with other rule-speed options still available). 
+
+Added a dedicated Club Selection dropdown in SG mode (Auto from Rule + manual club picks), as requested. 
+
+Added SG club feedback badge (Suggested club) and logic to auto-suggest based on current SG distances/rule mode, or honor manual club selection. 
+
+Moved the full club mapping into its own expandable dropdown panel so it’s available when needed but no longer clutters the SG workflow. 
+
+Testing
+
+✅ python - <<'PY'\nfrom pathlib import Path\ns=Path('index.html').read_text(); Path('/tmp/app.js').write_text(s.split('<script>')[1].split('</script>')[0])\nPY\nnode --check /tmp/app.js
+
+✅ git add index.html && git commit -m "Tidy SG mode UI and add rule/club dropdown controls"
+
+
+File (1)
+
+index.html
+index.html
++166
+-8
+
+this is what I get after the merge conflicts are 
+
+
+Diff
+Logs
+
+index.html
+index.html
++166
+-8
+
+@@ -76,60 +76,61 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
 /* Palette from 5i upward (4i removed) */
 .c5  { --col:#ff6b2c; }  /* 5i red-orange */
 .c6  { --col:#f39c12; }  /* 6i orange */
@@ -108,6 +149,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
     </a>
   </div>
 
+  <div class="card">
   <div class="card" id="landingControlsCard">
     <div class="menu-grid">
       <!-- Left: Total Distance -->
@@ -134,48 +176,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
             </select>
         </div>
         <div class="field">
-            <label for="speed">Green Speed</label>
-            <select id="speed" title="Select green speed" aria-label="Green Speed">
-            <option value="veryfast">very fast (Rule of 14)</option>
-            <option value="fast">fast (Rule of 13)</option>
-            <option value="normal" selected>normal (Rule of 12)</option>
-            <option value="slow">slow (Rule of 11)</option>
-            <option value="veryslow">very slow (Rule of 10)</option>
-            </select>
-        </div>
-        <div class="field">
-            <label for="inc">Landing Increment</label>
-            <select id="inc" title="Select landing increment" aria-label="Landing Increment">
-              <option value="1">1</option>
-              <option value="0.5">0.5</option>
-              <option value="0.25">0.25</option>
-            </select>
-        </div>
-        <div class="field">
-            <label for="rounding">Club Rounding</label>
-            <select id="rounding" title="Select club rounding" aria-label="Club Rounding">
-              <option value="round" selected>Nearest</option>
-              <option value="floor">Higher Flight</option>
-              <option value="ceil">Longer Rollout</option>
-            </select>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card table" id="landingCard">
-    <div class="table-title">Landing Zone</div>
-    <div class="row header">
-      <div class="left">Chip Club</div>
-      <div class="left">Lob Club</div>
-    </div>
-    <div id="rows"></div>
-  </div>
-
-  <div class="card" id="handicapCard" style="display:none">
-    <div class="table-title">WHS Handicap Calculator</div>
-    <form id="handicapForm" autocomplete="off">
-      <div class="field">
+@@ -178,130 +179,287 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
         <label for="handicapIndex">Handicap Index</label>
         <input id="handicapIndex" type="number" step="0.1" min="-10" max="54" placeholder="e.g. 12.3">
       </div>
@@ -201,6 +202,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
     <div class="minihelp" style="margin-top:8px">Formula: <br>Course Handicap = (Handicap Index × Slope Rating / 113) + (Course Rating − Par) [+ PCC]</div>
   </div>
 
+  <div class="card">
 
 
   <div class="card" id="sgCard" style="display:none">
@@ -279,6 +281,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
       <div class="bag-item"><span>13 — LW</span><span>~58–60°</span></div>
       <div class="bag-item"><span>13+ — LW+</span><span>60°+</span></div>
     </div>
+  </div>
   </details>
 </div>
 
@@ -312,14 +315,19 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     const landingControlsCard = document.getElementById('landingControlsCard');
     const clubMappingCard = document.getElementById('clubMappingCard');
     const handicapCard = document.getElementById('handicapCard');
+    if(toolModeEl && landingCard && handicapCard) {
     const sgCard = document.getElementById('sgCard');
     if(toolModeEl && landingCard && handicapCard && sgCard && landingControlsCard && clubMappingCard) {
       toolModeEl.addEventListener('change', function() {
         if(this.value === 'landing') {
+          landingCard.style.display = '';
+          handicapCard.style.display = 'none';
           landingCard.style.display = ''; landingControlsCard.style.display=''; clubMappingCard.style.display=''; handicapCard.style.display = 'none'; sgCard.style.display='none';
         } else if(this.value === 'handicap') {
           landingCard.style.display = 'none'; landingControlsCard.style.display='none'; clubMappingCard.style.display='none'; handicapCard.style.display = ''; sgCard.style.display='none';
         } else {
+          landingCard.style.display = 'none';
+          handicapCard.style.display = '';
           landingCard.style.display = 'none'; landingControlsCard.style.display='none'; clubMappingCard.style.display=''; handicapCard.style.display = 'none'; sgCard.style.display='';
         }
       });
@@ -463,17 +471,3 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
       const lobClass  = `cell right mono c13`; // fixed 13-LW
 
       const row=document.createElement('div'); row.className='row';
-      row.innerHTML = `
-        <div class="${chipClass}">${fmt(B, step%1?2:0)} ${unitLabel} — <span class="badge">${displayClubNum(clubChip.clubNum)}-${clubChip.clubName}</span></div>
-        <div class="${lobClass}">${fmt(C, step%1?2:0)} ${unitLabel} — <span class="badge">13-LW</span></div>`;
-      rowsEl.appendChild(row);
-    }
-  }
-
-  [totalEl, unitEl, incEl, roundingEl, speedEl].forEach(e=>e.addEventListener('input', build));
-  document.querySelectorAll('.qbtn').forEach(b=>b.addEventListener('click', ()=>{ totalEl.value=b.dataset.a; build(); }));
-  build();
-})();
-</script>
-</body>
-</html>
