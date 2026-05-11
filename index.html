@@ -111,7 +111,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
       </select>
     </div>
   <div class="header-flex">
-    <h1 class="header-title">RULE12 – The Paul Runyan Method</h1>
+    <h1 class="header-title" id="appTitle">RULE12 – The Paul Runyan Method</h1>
     <a class="info-link" href="https://en.wikipedia.org/wiki/Paul_Runyan" target="_blank" rel="noopener" title="Learn more about Paul Runyan's method">
       <svg class="info-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
     </a>
@@ -236,10 +236,6 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
       <div></div>
     </div>
     <div class="row">
-      <div><label for="sgRuleMode">Rule Mode</label><select id="sgRuleMode"><option value="12" selected>Rule of 12 (Normal)</option><option value="14">Rule of 14 (Very Fast)</option><option value="13">Rule of 13 (Fast)</option><option value="11">Rule of 11 (Slow)</option><option value="10">Rule of 10 (Very Slow)</option></select></div>
-      <div><label for="sgClubChoice">Club Selection</label><select id="sgClubChoice"><option value="auto" selected>Auto from Rule</option><option>5i</option><option>6i</option><option>7i</option><option>8i</option><option>9i</option><option>PW</option><option>UW</option><option>SW</option><option>LW</option><option>LW+</option></select></div>
-    </div>
-    <div class="row">
       <div>
         <label for="sgLieStart">Start Lie</label>
         <select id="sgLieStart">
@@ -335,6 +331,7 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
 (function(){
     // --- Tool Mode Switch ---
     const toolModeEl = document.getElementById('toolMode');
+    const appTitle = document.getElementById('appTitle');
     const landingCard = document.getElementById('landingCard');
     const landingControlsCard = document.getElementById('landingControlsCard');
     const clubMappingCard = document.getElementById('clubMappingCard');
@@ -348,18 +345,21 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
           clubMappingCard.style.display='';
           handicapCard.style.display = 'none';
           sgCard.style.display='none';
+          if(appTitle) appTitle.textContent = 'RULE12 – The Paul Runyan Method';
         } else if(mode === 'handicap') {
           landingCard.style.display = 'none';
           landingControlsCard.style.display='none';
           clubMappingCard.style.display='none';
           handicapCard.style.display = '';
           sgCard.style.display='none';
+          if(appTitle) appTitle.textContent = 'RULE12';
         } else {
           landingCard.style.display = 'none';
           landingControlsCard.style.display='none';
           clubMappingCard.style.display='';
           handicapCard.style.display = 'none';
           sgCard.style.display='';
+          if(appTitle) appTitle.textContent = 'RULE12';
         }
       }
       toolModeEl.addEventListener('change', function() { applyToolMode(this.value); });
@@ -421,7 +421,7 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     endDist: document.getElementById('sgEndDist'), lockTeeBtn: document.getElementById('lockTeeBtn'), useGpsBtn: document.getElementById('useGpsBtn'),
     calcBtn: document.getElementById('calcSgBtn'), addBtn: document.getElementById('addShotBtn'), resetBtn: document.getElementById('resetHoleBtn'),
     status: document.getElementById('sgStatus'), shotOut: document.getElementById('sgShotOut'), holeOut: document.getElementById('sgHoleOut'),
-    neededOut: document.getElementById('sgNeededOut'), targetOut: document.getElementById('sgTargetOut'), countsOut: document.getElementById('sgCountsOut'), ruleMode: document.getElementById('sgRuleMode'), clubChoice: document.getElementById('sgClubChoice'), clubOut: document.getElementById('sgClubOut'),
+    neededOut: document.getElementById('sgNeededOut'), targetOut: document.getElementById('sgTargetOut'), countsOut: document.getElementById('sgCountsOut'), clubOut: document.getElementById('sgClubOut'),
     maintainOut: document.getElementById('sgMaintainOut'), endTargetOut: document.getElementById('sgEndTargetOut'), planChart: document.getElementById('sgPlanChart')
   };
   let currentShotSG = null, holeSG = 0, teeLoc = null, lastNeededYards = null;
@@ -465,16 +465,18 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
   }
 
   function suggestClub(){
-    const choice = sgEls.clubChoice.value;
-    if(choice !== 'auto'){ sgEls.clubOut.textContent = `Suggested club: ${choice} (manual)`; return; }
     const s = parseFloat(sgEls.startDist.value||'0'), e = parseFloat(sgEls.endDist.value||'0');
+    if(!isFinite(s) || !isFinite(e) || s<=0){
+      sgEls.clubOut.textContent = 'Suggested club: —';
+      return;
+    }
     const carry = Math.max(1, s-e);
-    const base = parseInt(sgEls.ruleMode.value||'12',10);
+    const base = 12;
     const roll = Math.max(1,e);
     const D = roll / Math.max(1, carry);
     const raw = Math.round(base - D);
     const n = Math.max(5, Math.min(14, raw));
-    sgEls.clubOut.textContent = `Suggested club: ${displayClubNum(n)}-${CLUB_NAME[n]} (${sgEls.ruleMode.options[sgEls.ruleMode.selectedIndex].text})`;
+    sgEls.clubOut.textContent = `Suggested club: ${displayClubNum(n)}-${CLUB_NAME[n]} (Rule of 12)`;
   }
   function clearPlanChart(){ if(sgEls.planChart) sgEls.planChart.innerHTML = ''; }
   function updateMaintainPlan(){
@@ -598,7 +600,7 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
   sgEls.calcBtn?.addEventListener('click', calcShot);
   sgEls.addBtn?.addEventListener('click', ()=>{ saveCurrentShot(); });
   sgEls.resetBtn?.addEventListener('click', ()=>{ holeSG=0; currentShotSG=null; teeLoc=null; lastNeededYards=null; shotCounts.drive=0; shotCounts.approach=0; shotCounts.putt=0; updateCounts(); sgEls.holeOut.textContent='Hole SG: 0.00'; sgEls.shotOut.textContent='Shot SG: —'; sgEls.neededOut.textContent='Needed yardage: —'; sgEls.status.textContent='Hole reset.'; updateTarget(); });
-  ;['input','change'].forEach(evt=>[sgEls.startDist,sgEls.endDist,sgEls.lieStart,sgEls.benchmark,sgEls.ruleMode,sgEls.clubChoice,sgEls.totalYardage].forEach(el=>el?.addEventListener(evt, ()=>{ updateTarget(); suggestClub(); })));
+  ;['input','change'].forEach(evt=>[sgEls.startDist,sgEls.endDist,sgEls.lieStart,sgEls.benchmark,sgEls.totalYardage].forEach(el=>el?.addEventListener(evt, ()=>{ updateTarget(); suggestClub(); })));
   updateCounts();
   updateTarget();
   suggestClub();
