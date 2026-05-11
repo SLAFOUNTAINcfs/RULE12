@@ -206,7 +206,9 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
         } else {
           landingCard.style.display = 'none'; landingControlsCard.style.display='none'; clubMappingCard.style.display=''; handicapCard.style.display = 'none'; sgCard.style.display='';
         }
-      });
+      }
+      toolModeEl.addEventListener('change', function() { applyToolMode(this.value); });
+      applyToolMode(toolModeEl.value);
     }
 
     // --- Handicap Calculator ---
