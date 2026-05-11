@@ -277,6 +277,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
     </div>
     <div class="quickbar mt10">
       <button class="qbtn" id="locateMeBtn" type="button">Center On My Location</button>
+      <button class="qbtn" id="setTeeBtn" type="button">Set Tee On Map</button>
       <button class="qbtn" id="lockTeeBtn" type="button">Lock Tee Location</button>
       <button class="qbtn" id="setPinBtn" type="button">Set Pin On Map</button>
       <button class="qbtn" id="clearPinBtn" type="button">Clear Pin</button>
@@ -306,7 +307,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
     </div>
     <div class="sg-map-wrap">
       <div id="sgMap" class="sg-map" aria-label="Course map"></div>
-      <div class="minihelp">Map opens in satellite mode. Tap Center On My Location to jump to your position, lock tee with GPS, then set pin on the map.</div>
+      <div class="minihelp">Map opens in satellite mode. Tap Set Tee On Map to place tee manually (or lock tee with GPS), then set pin on the map.</div>
     </div>
     <div class="minihelp">Lock tee location on the first tee, enter total hole yardage, then tap GPS update. First tap sets baseline distance; each next tap auto-calculates and auto-saves shot SG.</div>
   </div>
@@ -455,14 +456,14 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     approachPref: document.getElementById('sgApproachPref'),
     totalYardage: document.getElementById('sgTotalYardage'),
     lieStart: document.getElementById('sgLieStart'), lieEnd: document.getElementById('sgLieEnd'), startDist: document.getElementById('sgStartDist'),
-    endDist: document.getElementById('sgEndDist'), locateMeBtn: document.getElementById('locateMeBtn'), lockTeeBtn: document.getElementById('lockTeeBtn'), setPinBtn: document.getElementById('setPinBtn'), clearPinBtn: document.getElementById('clearPinBtn'), useGpsBtn: document.getElementById('useGpsBtn'),
+    endDist: document.getElementById('sgEndDist'), locateMeBtn: document.getElementById('locateMeBtn'), setTeeBtn: document.getElementById('setTeeBtn'), lockTeeBtn: document.getElementById('lockTeeBtn'), setPinBtn: document.getElementById('setPinBtn'), clearPinBtn: document.getElementById('clearPinBtn'), useGpsBtn: document.getElementById('useGpsBtn'),
     calcBtn: document.getElementById('calcSgBtn'), addBtn: document.getElementById('addShotBtn'), resetBtn: document.getElementById('resetHoleBtn'),
     status: document.getElementById('sgStatus'), shotOut: document.getElementById('sgShotOut'), holeOut: document.getElementById('sgHoleOut'),
     neededOut: document.getElementById('sgNeededOut'), targetOut: document.getElementById('sgTargetOut'), countsOut: document.getElementById('sgCountsOut'), clubOut: document.getElementById('sgClubOut'),
     maintainOut: document.getElementById('sgMaintainOut'), endTargetOut: document.getElementById('sgEndTargetOut'), layupOut: document.getElementById('sgLayupOut'), approachOut: document.getElementById('sgApproachOut'), planChart: document.getElementById('sgPlanChart'), mapEl: document.getElementById('sgMap')
   };
   let currentShotSG = null, holeSG = 0, teeLoc = null, pinLoc = null, lastNeededYards = null;
-  let sgMap = null, teeMarker = null, pinMarker = null, currentPosMarker = null, selectingPin = false;
+  let sgMap = null, teeMarker = null, pinMarker = null, currentPosMarker = null, selectingTee = false, selectingPin = false;
   const shotCounts = {drive:0, approach:0, putt:0};
   function initSgMap(){
     if(sgMap || !sgEls.mapEl || !window.L) return;
@@ -487,12 +488,22 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
       { collapsed: true }
     ).addTo(sgMap);
     sgMap.on('click', (e)=>{
-      if(!selectingPin) return;
-      pinLoc = {lat:e.latlng.lat, lon:e.latlng.lng};
-      if(pinMarker) pinMarker.setLatLng([pinLoc.lat, pinLoc.lon]);
-      else pinMarker = L.marker([pinLoc.lat, pinLoc.lon]).addTo(sgMap);
-      selectingPin = false;
-      sgEls.status.textContent = 'Pin location set from map. GPS updates will use pin distance.';
+      if(selectingTee){
+        teeLoc = {lat:e.latlng.lat, lon:e.latlng.lng};
+        selectingTee = false;
+        lastNeededYards = null;
+        sgEls.neededOut.textContent = 'Needed yardage: —';
+        syncMapMarkers();
+        sgEls.status.textContent = 'Tee location set from map. Enter total hole yardage, then update GPS.';
+        return;
+      }
+      if(selectingPin){
+        pinLoc = {lat:e.latlng.lat, lon:e.latlng.lng};
+        if(pinMarker) pinMarker.setLatLng([pinLoc.lat, pinLoc.lon]);
+        else pinMarker = L.marker([pinLoc.lat, pinLoc.lon]).addTo(sgMap);
+        selectingPin = false;
+        sgEls.status.textContent = 'Pin location set from map. GPS updates will use pin distance.';
+      }
     });
   }
   function centerMapOnCurrentLocation(statusPrefix){
@@ -723,6 +734,16 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
   }
 
   sgEls.locateMeBtn?.addEventListener('click', ()=> centerMapOnCurrentLocation('Centered map on your current location.'));
+  sgEls.setTeeBtn?.addEventListener('click', ()=>{
+    initSgMap();
+    if(!sgMap){
+      sgEls.status.textContent = 'Map not available. Check internet and try again.';
+      return;
+    }
+    selectingPin = false;
+    selectingTee = true;
+    sgEls.status.textContent = 'Tap the map to set tee location.';
+  });
   sgEls.lockTeeBtn?.addEventListener('click', ()=>{
     if(teeLoc){
       const ok = window.confirm('Tee location is already locked. Update it to your current GPS location?');
@@ -733,6 +754,7 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     }
     capturePosition((pos)=>{
     teeLoc = {lat:pos.coords.latitude, lon:pos.coords.longitude};
+    selectingTee = false;
     lastNeededYards = null;
     sgEls.neededOut.textContent = 'Needed yardage: —';
     sgEls.status.textContent='Tee location locked. Enter total hole yardage, then use GPS update.';
@@ -746,11 +768,13 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
       sgEls.status.textContent = 'Map not available. Check internet and try again.';
       return;
     }
+    selectingTee = false;
     selectingPin = true;
     sgEls.status.textContent = 'Tap the map to set pin location.';
   });
   sgEls.clearPinBtn?.addEventListener('click', ()=>{
     pinLoc = null;
+    selectingTee = false;
     selectingPin = false;
     if(pinMarker && sgMap){
       sgMap.removeLayer(pinMarker);
@@ -791,7 +815,7 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
   }, 'Could not update GPS distance.'));
   sgEls.calcBtn?.addEventListener('click', calcShot);
   sgEls.addBtn?.addEventListener('click', ()=>{ saveCurrentShot(); });
-  sgEls.resetBtn?.addEventListener('click', ()=>{ holeSG=0; currentShotSG=null; teeLoc=null; pinLoc=null; lastNeededYards=null; selectingPin=false; shotCounts.drive=0; shotCounts.approach=0; shotCounts.putt=0; if(teeMarker){ sgMap?.removeLayer(teeMarker); teeMarker=null; } if(pinMarker){ sgMap?.removeLayer(pinMarker); pinMarker=null; } updateCounts(); sgEls.holeOut.textContent='Hole SG: 0.00'; sgEls.shotOut.textContent='Shot SG: —'; sgEls.neededOut.textContent='Needed yardage: —'; sgEls.status.textContent='Hole reset.'; updateTarget(); });
+  sgEls.resetBtn?.addEventListener('click', ()=>{ holeSG=0; currentShotSG=null; teeLoc=null; pinLoc=null; lastNeededYards=null; selectingTee=false; selectingPin=false; shotCounts.drive=0; shotCounts.approach=0; shotCounts.putt=0; if(teeMarker){ sgMap?.removeLayer(teeMarker); teeMarker=null; } if(pinMarker){ sgMap?.removeLayer(pinMarker); pinMarker=null; } updateCounts(); sgEls.holeOut.textContent='Hole SG: 0.00'; sgEls.shotOut.textContent='Shot SG: —'; sgEls.neededOut.textContent='Needed yardage: —'; sgEls.status.textContent='Hole reset.'; updateTarget(); });
   ;['input','change'].forEach(evt=>[sgEls.startDist,sgEls.endDist,sgEls.lieStart,sgEls.benchmark,sgEls.totalYardage,sgEls.shotType,sgEls.holePar,sgEls.approachPref].forEach(el=>el?.addEventListener(evt, ()=>{ updateTarget(); suggestClub(); })));
   updateCounts();
   updateTarget();
