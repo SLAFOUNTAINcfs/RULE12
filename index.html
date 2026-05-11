@@ -272,6 +272,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
       </div>
     </div>
     <div class="quickbar" style="margin-top:10px">
+      <button class="qbtn" id="locateMeBtn" type="button">Center On My Location</button>
       <button class="qbtn" id="lockTeeBtn" type="button">Lock Tee Location</button>
       <button class="qbtn" id="setPinBtn" type="button">Set Pin On Map</button>
       <button class="qbtn" id="clearPinBtn" type="button">Clear Pin</button>
@@ -301,7 +302,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
     </div>
     <div class="sg-map-wrap">
       <div id="sgMap" class="sg-map" aria-label="Course map"></div>
-      <div class="minihelp">Lock tee with GPS, tap Set Pin On Map, then click the map to place the flag. GPS updates will use pin distance for SG guidance.</div>
+      <div class="minihelp">Map opens in satellite mode. Tap Center On My Location to jump to your position, lock tee with GPS, then set pin on the map.</div>
     </div>
     <div class="minihelp">Lock tee location on the first tee, enter total hole yardage, then tap GPS update. First tap sets baseline distance; each next tap auto-calculates and auto-saves shot SG.</div>
   </div>
@@ -450,22 +451,37 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     approachPref: document.getElementById('sgApproachPref'),
     totalYardage: document.getElementById('sgTotalYardage'),
     lieStart: document.getElementById('sgLieStart'), lieEnd: document.getElementById('sgLieEnd'), startDist: document.getElementById('sgStartDist'),
-    endDist: document.getElementById('sgEndDist'), lockTeeBtn: document.getElementById('lockTeeBtn'), setPinBtn: document.getElementById('setPinBtn'), clearPinBtn: document.getElementById('clearPinBtn'), useGpsBtn: document.getElementById('useGpsBtn'),
+    endDist: document.getElementById('sgEndDist'), locateMeBtn: document.getElementById('locateMeBtn'), lockTeeBtn: document.getElementById('lockTeeBtn'), setPinBtn: document.getElementById('setPinBtn'), clearPinBtn: document.getElementById('clearPinBtn'), useGpsBtn: document.getElementById('useGpsBtn'),
     calcBtn: document.getElementById('calcSgBtn'), addBtn: document.getElementById('addShotBtn'), resetBtn: document.getElementById('resetHoleBtn'),
     status: document.getElementById('sgStatus'), shotOut: document.getElementById('sgShotOut'), holeOut: document.getElementById('sgHoleOut'),
     neededOut: document.getElementById('sgNeededOut'), targetOut: document.getElementById('sgTargetOut'), countsOut: document.getElementById('sgCountsOut'), clubOut: document.getElementById('sgClubOut'),
     maintainOut: document.getElementById('sgMaintainOut'), endTargetOut: document.getElementById('sgEndTargetOut'), layupOut: document.getElementById('sgLayupOut'), approachOut: document.getElementById('sgApproachOut'), planChart: document.getElementById('sgPlanChart'), mapEl: document.getElementById('sgMap')
   };
   let currentShotSG = null, holeSG = 0, teeLoc = null, pinLoc = null, lastNeededYards = null;
-  let sgMap = null, teeMarker = null, pinMarker = null, selectingPin = false;
+  let sgMap = null, teeMarker = null, pinMarker = null, currentPosMarker = null, selectingPin = false;
   const shotCounts = {drive:0, approach:0, putt:0};
   function initSgMap(){
     if(sgMap || !sgEls.mapEl || !window.L) return;
     sgMap = L.map(sgEls.mapEl).setView([39.8283, -98.5795], 4);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(sgMap);
+    });
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      attribution: 'Tiles &copy; Esri'
+    });
+    const labelsLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      attribution: 'Labels &copy; Esri'
+    });
+    satelliteLayer.addTo(sgMap);
+    labelsLayer.addTo(sgMap);
+    L.control.layers(
+      { 'Satellite': satelliteLayer, 'Street': streetLayer },
+      { 'Labels': labelsLayer },
+      { collapsed: true }
+    ).addTo(sgMap);
     sgMap.on('click', (e)=>{
       if(!selectingPin) return;
       pinLoc = {lat:e.latlng.lat, lon:e.latlng.lng};
@@ -474,6 +490,21 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
       selectingPin = false;
       sgEls.status.textContent = 'Pin location set from map. GPS updates will use pin distance.';
     });
+  }
+  function centerMapOnCurrentLocation(statusPrefix){
+    capturePosition((pos)=>{
+      const cur = {lat:pos.coords.latitude, lon:pos.coords.longitude};
+      initSgMap();
+      if(!sgMap){
+        sgEls.status.textContent = 'Map not available. Check internet and try again.';
+        return;
+      }
+      if(currentPosMarker) currentPosMarker.setLatLng([cur.lat, cur.lon]);
+      else currentPosMarker = L.circleMarker([cur.lat, cur.lon], {radius:6, color:'#2ea8ff', weight:2, fillColor:'#2ea8ff', fillOpacity:0.35}).addTo(sgMap);
+      sgMap.setView([cur.lat, cur.lon], Math.max(17, sgMap.getZoom() || 17));
+      const prefix = statusPrefix || 'Centered map on your current location.';
+      sgEls.status.textContent = `${prefix} GPS accuracy ±${(pos.coords.accuracy*1.09361).toFixed(1)} yd.`;
+    }, 'Could not get current location.');
   }
   function syncMapMarkers(){
     if(!sgMap) return;
@@ -687,6 +718,7 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     return { baselineSet:true, shotCaptured };
   }
 
+  sgEls.locateMeBtn?.addEventListener('click', ()=> centerMapOnCurrentLocation('Centered map on your current location.'));
   sgEls.lockTeeBtn?.addEventListener('click', ()=>{
     if(teeLoc){
       const ok = window.confirm('Tee location is already locked. Update it to your current GPS location?');
