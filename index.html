@@ -2,6 +2,7 @@
 <html lang="en"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/jpeg" href="favicon.jpeg">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <title>RULE12</title>
   <!--
     Info: Paul Runyan's Chipping Technique
@@ -66,6 +67,8 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
 .sg-target{stroke:#f6c177;stroke-width:2;stroke-dasharray:5 4}
 .sg-point{fill:#6ee7b7;stroke:#0e1117;stroke-width:1.5}
 .sg-label{fill:#c9d2e3;font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.sg-map-wrap{margin-top:10px;border:1px solid #2a2f3a;border-radius:12px;padding:10px;background:#10131a}
+.sg-map{width:100%;height:260px;border:1px solid #2a2f3a;border-radius:10px;overflow:hidden}
 
 /* Menu layout: left = Total Distance; right = settings */
 .menu-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:8px;align-items:stretch}
@@ -270,6 +273,8 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
     </div>
     <div class="quickbar" style="margin-top:10px">
       <button class="qbtn" id="lockTeeBtn" type="button">Lock Tee Location</button>
+      <button class="qbtn" id="setPinBtn" type="button">Set Pin On Map</button>
+      <button class="qbtn" id="clearPinBtn" type="button">Clear Pin</button>
       <button class="qbtn" id="useGpsBtn" type="button">Update GPS (Auto Save Shot)</button>
       <button class="qbtn" id="calcSgBtn" type="button">Calculate Shot SG</button>
       <button class="qbtn" id="addShotBtn" type="button">Save Shot</button>
@@ -294,6 +299,10 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
       <svg id="sgPlanChart" viewBox="0 0 520 220" role="img" aria-label="Strokes gained distance planner chart"></svg>
       <div class="minihelp">Chart shows shot distance vs shot SG around the 0-SG target. Left of the target line loses SG; right of it gains SG.</div>
     </div>
+    <div class="sg-map-wrap">
+      <div id="sgMap" class="sg-map" aria-label="Course map"></div>
+      <div class="minihelp">Lock tee with GPS, tap Set Pin On Map, then click the map to place the flag. GPS updates will use pin distance for SG guidance.</div>
+    </div>
     <div class="minihelp">Lock tee location on the first tee, enter total hole yardage, then tap GPS update. First tap sets baseline distance; each next tap auto-calculates and auto-saves shot SG.</div>
   </div>
 
@@ -316,6 +325,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
   </details>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // === JS ===
 const CLUB_NAME = {5:'5i',6:'6i',7:'7i',8:'8i',9:'9i',10:'PW',11:'UW',12:'SW',13:'LW',14:'LW+'};
@@ -371,6 +381,8 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
           handicapCard.style.display = 'none';
           sgCard.style.display='';
           if(appTitle) appTitle.textContent = 'RULE12';
+          initSgMap();
+          setTimeout(()=>{ if(sgMap){ sgMap.invalidateSize(); syncMapMarkers(); } }, 0);
         }
       }
       toolModeEl.addEventListener('change', function() { applyToolMode(this.value); });
@@ -438,14 +450,47 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     approachPref: document.getElementById('sgApproachPref'),
     totalYardage: document.getElementById('sgTotalYardage'),
     lieStart: document.getElementById('sgLieStart'), lieEnd: document.getElementById('sgLieEnd'), startDist: document.getElementById('sgStartDist'),
-    endDist: document.getElementById('sgEndDist'), lockTeeBtn: document.getElementById('lockTeeBtn'), useGpsBtn: document.getElementById('useGpsBtn'),
+    endDist: document.getElementById('sgEndDist'), lockTeeBtn: document.getElementById('lockTeeBtn'), setPinBtn: document.getElementById('setPinBtn'), clearPinBtn: document.getElementById('clearPinBtn'), useGpsBtn: document.getElementById('useGpsBtn'),
     calcBtn: document.getElementById('calcSgBtn'), addBtn: document.getElementById('addShotBtn'), resetBtn: document.getElementById('resetHoleBtn'),
     status: document.getElementById('sgStatus'), shotOut: document.getElementById('sgShotOut'), holeOut: document.getElementById('sgHoleOut'),
     neededOut: document.getElementById('sgNeededOut'), targetOut: document.getElementById('sgTargetOut'), countsOut: document.getElementById('sgCountsOut'), clubOut: document.getElementById('sgClubOut'),
-    maintainOut: document.getElementById('sgMaintainOut'), endTargetOut: document.getElementById('sgEndTargetOut'), layupOut: document.getElementById('sgLayupOut'), approachOut: document.getElementById('sgApproachOut'), planChart: document.getElementById('sgPlanChart')
+    maintainOut: document.getElementById('sgMaintainOut'), endTargetOut: document.getElementById('sgEndTargetOut'), layupOut: document.getElementById('sgLayupOut'), approachOut: document.getElementById('sgApproachOut'), planChart: document.getElementById('sgPlanChart'), mapEl: document.getElementById('sgMap')
   };
-  let currentShotSG = null, holeSG = 0, teeLoc = null, lastNeededYards = null;
+  let currentShotSG = null, holeSG = 0, teeLoc = null, pinLoc = null, lastNeededYards = null;
+  let sgMap = null, teeMarker = null, pinMarker = null, selectingPin = false;
   const shotCounts = {drive:0, approach:0, putt:0};
+  function initSgMap(){
+    if(sgMap || !sgEls.mapEl || !window.L) return;
+    sgMap = L.map(sgEls.mapEl).setView([39.8283, -98.5795], 4);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(sgMap);
+    sgMap.on('click', (e)=>{
+      if(!selectingPin) return;
+      pinLoc = {lat:e.latlng.lat, lon:e.latlng.lng};
+      if(pinMarker) pinMarker.setLatLng([pinLoc.lat, pinLoc.lon]);
+      else pinMarker = L.marker([pinLoc.lat, pinLoc.lon]).addTo(sgMap);
+      selectingPin = false;
+      sgEls.status.textContent = 'Pin location set from map. GPS updates will use pin distance.';
+    });
+  }
+  function syncMapMarkers(){
+    if(!sgMap) return;
+    if(teeLoc){
+      if(teeMarker) teeMarker.setLatLng([teeLoc.lat, teeLoc.lon]);
+      else teeMarker = L.marker([teeLoc.lat, teeLoc.lon]).addTo(sgMap);
+    }
+    if(pinLoc){
+      if(pinMarker) pinMarker.setLatLng([pinLoc.lat, pinLoc.lon]);
+      else pinMarker = L.marker([pinLoc.lat, pinLoc.lon]).addTo(sgMap);
+    }
+    const pts = [];
+    if(teeLoc) pts.push([teeLoc.lat, teeLoc.lon]);
+    if(pinLoc) pts.push([pinLoc.lat, pinLoc.lon]);
+    if(pts.length === 2) sgMap.fitBounds(pts, {padding:[30,30]});
+    else if(pts.length === 1) sgMap.setView(pts[0], 17);
+  }
   function updateCounts(){ sgEls.countsOut.textContent = `Drive: ${shotCounts.drive} | Approach: ${shotCounts.approach} | Putt: ${shotCounts.putt}`; }
   function updateTarget(){
     const startDist = parseFloat(sgEls.startDist.value||'0');
@@ -642,21 +687,75 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     return { baselineSet:true, shotCaptured };
   }
 
-  sgEls.lockTeeBtn?.addEventListener('click', ()=> capturePosition((pos)=>{
+  sgEls.lockTeeBtn?.addEventListener('click', ()=>{
+    if(teeLoc){
+      const ok = window.confirm('Tee location is already locked. Update it to your current GPS location?');
+      if(!ok){
+        sgEls.status.textContent = 'Kept existing tee location.';
+        return;
+      }
+    }
+    capturePosition((pos)=>{
     teeLoc = {lat:pos.coords.latitude, lon:pos.coords.longitude};
     lastNeededYards = null;
     sgEls.neededOut.textContent = 'Needed yardage: —';
     sgEls.status.textContent='Tee location locked. Enter total hole yardage, then use GPS update.';
-  }, 'Could not lock tee location.'));
+    initSgMap();
+    syncMapMarkers();
+    }, 'Could not lock tee location.');
+  });
+  sgEls.setPinBtn?.addEventListener('click', ()=>{
+    initSgMap();
+    if(!sgMap){
+      sgEls.status.textContent = 'Map not available. Check internet and try again.';
+      return;
+    }
+    selectingPin = true;
+    sgEls.status.textContent = 'Tap the map to set pin location.';
+  });
+  sgEls.clearPinBtn?.addEventListener('click', ()=>{
+    pinLoc = null;
+    selectingPin = false;
+    if(pinMarker && sgMap){
+      sgMap.removeLayer(pinMarker);
+      pinMarker = null;
+    }
+    sgEls.status.textContent = 'Pin cleared. GPS updates will use tee/total-hole yardage.';
+  });
   sgEls.useGpsBtn?.addEventListener('click', ()=> capturePosition((pos)=>{
     if(!teeLoc){ sgEls.status.textContent='Lock tee location first.'; return; }
     const cur = {lat:pos.coords.latitude, lon:pos.coords.longitude};
+    if(pinLoc){
+      const needed = yardsBetween(cur, pinLoc);
+      const hadBaseline = lastNeededYards !== null;
+      sgEls.neededOut.textContent = `Needed yardage: ${needed.toFixed(1)} yd`;
+      if(!hadBaseline){
+        sgEls.startDist.value = needed.toFixed(1);
+        sgEls.status.textContent = `Pin yardage set to ${needed.toFixed(1)} yd. Hit your shot, then update GPS again.`;
+      } else {
+        sgEls.startDist.value = lastNeededYards.toFixed(1);
+        sgEls.endDist.value = needed.toFixed(1);
+        sgEls.status.textContent = `Pin yardages updated: start ${lastNeededYards.toFixed(1)} yd, end ${needed.toFixed(1)} yd. Calculating and saving shot...`;
+      }
+      lastNeededYards = needed;
+      updateTarget();
+      suggestClub();
+      if(hadBaseline){
+        calcShot();
+        const shotCaptured = saveCurrentShot();
+        if(shotCaptured){
+          sgEls.status.textContent = `Shot auto-saved from pin yardage. Needed yardage now ${needed.toFixed(1)} yd.`;
+        }
+      }
+      sgEls.status.textContent += ` GPS accuracy ±${(pos.coords.accuracy*1.09361).toFixed(1)} yd.`;
+      return;
+    }
     updateNeededYardage(cur);
     sgEls.status.textContent += ` GPS accuracy ±${(pos.coords.accuracy*1.09361).toFixed(1)} yd.`;
   }, 'Could not update GPS distance.'));
   sgEls.calcBtn?.addEventListener('click', calcShot);
   sgEls.addBtn?.addEventListener('click', ()=>{ saveCurrentShot(); });
-  sgEls.resetBtn?.addEventListener('click', ()=>{ holeSG=0; currentShotSG=null; teeLoc=null; lastNeededYards=null; shotCounts.drive=0; shotCounts.approach=0; shotCounts.putt=0; updateCounts(); sgEls.holeOut.textContent='Hole SG: 0.00'; sgEls.shotOut.textContent='Shot SG: —'; sgEls.neededOut.textContent='Needed yardage: —'; sgEls.status.textContent='Hole reset.'; updateTarget(); });
+  sgEls.resetBtn?.addEventListener('click', ()=>{ holeSG=0; currentShotSG=null; teeLoc=null; pinLoc=null; lastNeededYards=null; selectingPin=false; shotCounts.drive=0; shotCounts.approach=0; shotCounts.putt=0; if(teeMarker){ sgMap?.removeLayer(teeMarker); teeMarker=null; } if(pinMarker){ sgMap?.removeLayer(pinMarker); pinMarker=null; } updateCounts(); sgEls.holeOut.textContent='Hole SG: 0.00'; sgEls.shotOut.textContent='Shot SG: —'; sgEls.neededOut.textContent='Needed yardage: —'; sgEls.status.textContent='Hole reset.'; updateTarget(); });
   ;['input','change'].forEach(evt=>[sgEls.startDist,sgEls.endDist,sgEls.lieStart,sgEls.benchmark,sgEls.totalYardage,sgEls.shotType,sgEls.holePar,sgEls.approachPref].forEach(el=>el?.addEventListener(evt, ()=>{ updateTarget(); suggestClub(); })));
   updateCounts();
   updateTarget();
