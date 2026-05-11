@@ -57,6 +57,15 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
 .bag{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .bag-item{display:flex;justify-content:space-between;border:1px solid #2a2f3a;border-radius:10px;padding:8px 10px;background:#10131a}
 .minihelp{color:#9aa3b2;font-size:.9rem;margin-top:6px}
+.sg-plan{margin-top:10px;border:1px solid #2a2f3a;border-radius:12px;padding:10px;background:#10131a}
+.sg-plan-head{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.sg-plan svg{width:100%;height:220px;display:block;background:#0e1117;border:1px solid #2a2f3a;border-radius:10px}
+.sg-axis{stroke:#3a4354;stroke-width:1}
+.sg-zero{stroke:#7f8ba3;stroke-width:1;stroke-dasharray:4 4}
+.sg-line{stroke:#4fd1ff;stroke-width:2;fill:none}
+.sg-target{stroke:#f6c177;stroke-width:2;stroke-dasharray:5 4}
+.sg-point{fill:#6ee7b7;stroke:#0e1117;stroke-width:1.5}
+.sg-label{fill:#c9d2e3;font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 
 /* Menu layout: left = Total Distance; right = settings */
 .menu-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:8px;align-items:stretch}
@@ -270,6 +279,14 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
       <span id="sgCountsOut" class="badge">Drive: 0 | Approach: 0 | Putt: 0</span>
       <span id="sgClubOut" class="badge">Suggested club: —</span>
     </div>
+    <div class="sg-plan">
+      <div class="sg-plan-head">
+        <span id="sgMaintainOut" class="badge">Maintain 0 SG shot: —</span>
+        <span id="sgEndTargetOut" class="badge">Target end distance: —</span>
+      </div>
+      <svg id="sgPlanChart" viewBox="0 0 520 220" role="img" aria-label="Strokes gained distance planner chart"></svg>
+      <div class="minihelp">Chart shows shot distance vs shot SG around the 0-SG target. Left of the target line loses SG; right of it gains SG.</div>
+    </div>
     <div class="minihelp">Lock tee location on the first tee, enter total hole yardage, then tap GPS update. First tap sets baseline distance; each next tap auto-calculates and auto-saves shot SG.</div>
   </div>
 
@@ -385,6 +402,12 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     if(lie==='green') return Math.max(1, 1 + 0.015*dist);
     return Math.max(1, b + 0.0045*dist);
   }
+  function inverseExpectedStrokes(exp, lie, bench){
+    if(lie==='holed' || exp<=0) return 0;
+    if(lie==='green') return Math.max(0, (exp - 1) / 0.015);
+    const b = SG_BASELINES[bench][lie] ?? SG_BASELINES[bench].fairway;
+    return Math.max(0, (exp - b) / 0.0045);
+  }
   function yardsBetween(a,b){
     const R=6371000, toRad=v=>v*Math.PI/180;
     const dLat=toRad(b.lat-a.lat), dLon=toRad(b.lon-a.lon);
@@ -398,7 +421,8 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     endDist: document.getElementById('sgEndDist'), lockTeeBtn: document.getElementById('lockTeeBtn'), useGpsBtn: document.getElementById('useGpsBtn'),
     calcBtn: document.getElementById('calcSgBtn'), addBtn: document.getElementById('addShotBtn'), resetBtn: document.getElementById('resetHoleBtn'),
     status: document.getElementById('sgStatus'), shotOut: document.getElementById('sgShotOut'), holeOut: document.getElementById('sgHoleOut'),
-    neededOut: document.getElementById('sgNeededOut'), targetOut: document.getElementById('sgTargetOut'), countsOut: document.getElementById('sgCountsOut'), ruleMode: document.getElementById('sgRuleMode'), clubChoice: document.getElementById('sgClubChoice'), clubOut: document.getElementById('sgClubOut')
+    neededOut: document.getElementById('sgNeededOut'), targetOut: document.getElementById('sgTargetOut'), countsOut: document.getElementById('sgCountsOut'), ruleMode: document.getElementById('sgRuleMode'), clubChoice: document.getElementById('sgClubChoice'), clubOut: document.getElementById('sgClubOut'),
+    maintainOut: document.getElementById('sgMaintainOut'), endTargetOut: document.getElementById('sgEndTargetOut'), planChart: document.getElementById('sgPlanChart')
   };
   let currentShotSG = null, holeSG = 0, teeLoc = null, lastNeededYards = null;
   const shotCounts = {drive:0, approach:0, putt:0};
@@ -408,6 +432,7 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     const eStart = expectedStrokes(startDist, sgEls.lieStart.value, sgEls.benchmark.value);
     const needed = eStart + holeSG - 1;
     sgEls.targetOut.textContent = `Next-shot target E(end) ≤ ${needed.toFixed(2)} (${needed<=0?'hole out now': 'for SG ≥ 0'})`;
+    updateMaintainPlan();
   }
   function calcShot(){
     const s = parseFloat(sgEls.startDist.value), e = parseFloat(sgEls.endDist.value||'0');
@@ -450,6 +475,75 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
     const raw = Math.round(base - D);
     const n = Math.max(5, Math.min(14, raw));
     sgEls.clubOut.textContent = `Suggested club: ${displayClubNum(n)}-${CLUB_NAME[n]} (${sgEls.ruleMode.options[sgEls.ruleMode.selectedIndex].text})`;
+  }
+  function clearPlanChart(){ if(sgEls.planChart) sgEls.planChart.innerHTML = ''; }
+  function updateMaintainPlan(){
+    const s = parseFloat(sgEls.startDist.value || '0');
+    const bench = sgEls.benchmark.value;
+    const lieStart = sgEls.lieStart.value;
+    const lieEnd = sgEls.lieEnd.value;
+    if(!isFinite(s) || s <= 0){
+      sgEls.maintainOut.textContent = 'Maintain 0 SG shot: —';
+      sgEls.endTargetOut.textContent = 'Target end distance: —';
+      clearPlanChart();
+      return;
+    }
+
+    const eStart = expectedStrokes(s, lieStart, bench);
+    const targetEEnd = eStart - 1;
+    const targetEndDist = targetEEnd <= 0 ? 0 : inverseExpectedStrokes(targetEEnd, lieEnd, bench);
+    const maintainShot = Math.max(0, s - targetEndDist);
+
+    sgEls.maintainOut.textContent = `Maintain 0 SG shot: ${maintainShot.toFixed(1)} yd`;
+    sgEls.endTargetOut.textContent = `Target end distance: ${targetEndDist.toFixed(1)} yd`;
+
+    const span = Math.max(35, maintainShot * 0.4);
+    const minShot = Math.max(0, maintainShot - span);
+    const maxShot = Math.min(s + 20, maintainShot + span);
+    const samples = 34;
+    const pts = [];
+
+    for(let i=0;i<=samples;i++){
+      const d = minShot + (maxShot - minShot) * (i / samples);
+      const endDist = Math.max(0, s - d);
+      const eEnd = (lieEnd==='holed' || endDist<=0) ? 0 : expectedStrokes(endDist, lieEnd, bench);
+      const sg = eStart - eEnd - 1;
+      pts.push({d, sg});
+    }
+
+    const minSG = Math.min(-0.8, ...pts.map(p=>p.sg));
+    const maxSG = Math.max(0.8, ...pts.map(p=>p.sg));
+    const padY = (maxSG - minSG) * 0.12;
+    const yMin = minSG - padY;
+    const yMax = maxSG + padY;
+    const W = 520, H = 220;
+    const left = 44, right = 12, top = 12, bottom = 26;
+    const innerW = W - left - right;
+    const innerH = H - top - bottom;
+    const x = (v)=> left + ((v - minShot) / Math.max(1e-6, (maxShot - minShot))) * innerW;
+    const y = (v)=> top + ((yMax - v) / Math.max(1e-6, (yMax - yMin))) * innerH;
+    const path = pts.map((p,i)=>`${i===0?'M':'L'} ${x(p.d).toFixed(2)} ${y(p.sg).toFixed(2)}`).join(' ');
+    const zeroY = y(0);
+    const targetX = x(maintainShot);
+
+    const curEnd = parseFloat(sgEls.endDist.value || 'NaN');
+    const hasCurrent = isFinite(curEnd) && curEnd >= 0;
+    const curShot = hasCurrent ? Math.max(0, s - curEnd) : null;
+    const curSG = hasCurrent ? (eStart - (lieEnd==='holed' || curEnd<=0 ? 0 : expectedStrokes(curEnd, lieEnd, bench)) - 1) : null;
+
+    sgEls.planChart.innerHTML = `
+      <line x1="${left}" y1="${top}" x2="${left}" y2="${H-bottom}" class="sg-axis" />
+      <line x1="${left}" y1="${H-bottom}" x2="${W-right}" y2="${H-bottom}" class="sg-axis" />
+      <line x1="${left}" y1="${zeroY.toFixed(2)}" x2="${W-right}" y2="${zeroY.toFixed(2)}" class="sg-zero" />
+      <line x1="${targetX.toFixed(2)}" y1="${top}" x2="${targetX.toFixed(2)}" y2="${H-bottom}" class="sg-target" />
+      <path d="${path}" class="sg-line" />
+      ${hasCurrent ? `<circle cx="${x(curShot).toFixed(2)}" cy="${y(curSG).toFixed(2)}" r="4" class="sg-point" />` : ''}
+      <text x="${left}" y="${H-8}" class="sg-label">${minShot.toFixed(0)} yd</text>
+      <text x="${W-right-68}" y="${H-8}" class="sg-label">${maxShot.toFixed(0)} yd</text>
+      <text x="${left+4}" y="${Math.max(top+10, zeroY-4).toFixed(2)}" class="sg-label">SG 0.00</text>
+      <text x="${Math.min(W-120, targetX+4).toFixed(2)}" y="${top+12}" class="sg-label">Maintain 0: ${maintainShot.toFixed(1)} yd</text>
+      ${hasCurrent ? `<text x="${Math.min(W-190, x(curShot)+6).toFixed(2)}" y="${Math.max(top+12, y(curSG)-6).toFixed(2)}" class="sg-label">Current: ${curShot.toFixed(1)} yd, SG ${curSG.toFixed(2)}</text>` : ''}
+    `;
   }
   function capturePosition(cb, errMsg){
     if(!navigator.geolocation){ sgEls.status.textContent='GPS not supported on this device/browser.'; return; }
@@ -506,6 +600,7 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
   sgEls.resetBtn?.addEventListener('click', ()=>{ holeSG=0; currentShotSG=null; teeLoc=null; lastNeededYards=null; shotCounts.drive=0; shotCounts.approach=0; shotCounts.putt=0; updateCounts(); sgEls.holeOut.textContent='Hole SG: 0.00'; sgEls.shotOut.textContent='Shot SG: —'; sgEls.neededOut.textContent='Needed yardage: —'; sgEls.status.textContent='Hole reset.'; updateTarget(); });
   ;['input','change'].forEach(evt=>[sgEls.startDist,sgEls.endDist,sgEls.lieStart,sgEls.benchmark,sgEls.ruleMode,sgEls.clubChoice,sgEls.totalYardage].forEach(el=>el?.addEventListener(evt, ()=>{ updateTarget(); suggestClub(); })));
   updateCounts();
+  updateTarget();
   suggestClub();
   const totalEl=document.getElementById('total'),
         unitEl=document.getElementById('unit'),
