@@ -101,11 +101,15 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
   color: var(--muted);
   margin-bottom: 8px;
 }
+.mb16{margin-bottom:16px}
+.mt10{margin-top:10px}
+.mt8{margin-top:8px}
+.cursor-pointer{cursor:pointer}
   </style>
 </head>
 <body>
 <div class="wrap">
-    <div class="card" style="margin-bottom:16px">
+    <div class="card mb16">
       <label for="toolMode">Select Tool</label>
       <select id="toolMode" aria-label="Select Tool">
         <option value="landing">Landing Zone Calculator</option>
@@ -184,7 +188,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
     <div id="rows"></div>
   </div>
 
-  <div class="card" id="handicapCard" style="display:none">
+  <div class="card" id="handicapCard">
     <div class="table-title">WHS Handicap Calculator</div>
     <form id="handicapForm" autocomplete="off">
       <div class="field">
@@ -207,15 +211,15 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
         <label for="pcc">Playing Conditions Calculation (PCC, optional)</label>
         <input id="pcc" type="number" step="1" min="-3" max="3" placeholder="e.g. 0">
       </div>
-      <button type="submit" class="qbtn" style="margin-top:10px">Calculate Course Handicap</button>
+      <button type="submit" class="qbtn mt10">Calculate Course Handicap</button>
     </form>
-    <div id="handicapResult" class="minihelp" style="margin-top:10px"></div>
-    <div class="minihelp" style="margin-top:8px">Formula: <br>Course Handicap = (Handicap Index × Slope Rating / 113) + (Course Rating − Par) [+ PCC]</div>
+    <div id="handicapResult" class="minihelp mt10"></div>
+    <div class="minihelp mt8">Formula: <br>Course Handicap = (Handicap Index × Slope Rating / 113) + (Course Rating − Par) [+ PCC]</div>
   </div>
 
 
 
-  <div class="card" id="sgCard" style="display:none">
+  <div class="card" id="sgCard">
     <div class="table-title">Strokes Gained GPS Tracker</div>
     <div class="row">
       <div>
@@ -271,7 +275,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
         <input id="sgEndDist" type="number" min="0" step="0.1" placeholder="e.g. 165">
       </div>
     </div>
-    <div class="quickbar" style="margin-top:10px">
+    <div class="quickbar mt10">
       <button class="qbtn" id="locateMeBtn" type="button">Center On My Location</button>
       <button class="qbtn" id="lockTeeBtn" type="button">Lock Tee Location</button>
       <button class="qbtn" id="setPinBtn" type="button">Set Pin On Map</button>
@@ -309,7 +313,7 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
 
 
   <details class="card" id="clubMappingCard">
-    <summary class="mono club-mapping-title" style="cursor:pointer">Club mapping (tap to expand)</summary>
+    <summary class="mono club-mapping-title cursor-pointer">Club mapping (tap to expand)</summary>
     <div class="mono club-mapping-title">Club mapping (number • abbrev • loft):</div>
     <div class="bag">
       <div class="bag-item"><span>5 — 5i</span><span>~24–27°</span></div>
