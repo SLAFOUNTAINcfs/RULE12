@@ -105,6 +105,10 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
 .mt10{margin-top:10px}
 .mt8{margin-top:8px}
 .cursor-pointer{cursor:pointer}
+.shot-grid{display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:8px}
+.club-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.club-btn.active,.section-btn.active{outline:2px solid #4fd1ff;background:#162033}
+.section-btn{font-weight:600}
   </style>
 </head>
 <body>
@@ -310,6 +314,38 @@ input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px s
       <div class="minihelp">Map opens in satellite mode. Tap Set Tee On Map to place tee manually (or lock tee with GPS), then set pin on the map.</div>
     </div>
     <div class="minihelp">Lock tee location on the first tee, enter total hole yardage, then tap GPS update. First tap sets baseline distance; each next tap auto-calculates and auto-saves shot SG.</div>
+  </div>
+  <div class="card" id="roundTrackerCard">
+    <div class="table-title">Round Shot Tracker</div>
+    <div class="shot-grid">
+      <button class="qbtn section-btn" data-section="Tee">Tee</button>
+      <button class="qbtn section-btn" data-section="Approach">Approach</button>
+      <button class="qbtn section-btn" data-section="Recovery">Recovery</button>
+      <button class="qbtn section-btn" data-section="Putting">Putting</button>
+    </div>
+    <div class="mt10">
+      <label>Club (1=Driver ... 14=Putter)</label>
+      <div class="club-grid" id="clubGrid"></div>
+    </div>
+    <div class="row mt10">
+      <div><label for="rtStart">Start Distance (yd/ft)</label><input id="rtStart" type="number" step="0.1"></div>
+      <div><label for="rtEnd">End Distance (yd/ft)</label><input id="rtEnd" type="number" step="0.1"></div>
+    </div>
+    <div class="row">
+      <div><label for="rtStrike">Strike Quality</label><select id="rtStrike"><option>Hit Well</option><option>High Face</option><option>Skulled</option><option>Thin</option><option>Heavy</option><option>Toe</option><option>Heel</option></select></div>
+      <div><label for="rtShape">Shot Shape</label><select id="rtShape"><option>Neutral</option><option>Draw</option><option>Hook</option><option>Push Draw</option><option>Fade</option><option>Push Fade</option><option>Slice</option><option>Pull</option></select></div>
+    </div>
+    <div class="row">
+      <div><label for="rtClock">Putt Clock Position</label><select id="rtClock"><option>12</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></div>
+      <div><label for="rtNotes">Notes</label><input id="rtNotes" type="text" placeholder="Optional"></div>
+    </div>
+    <div class="quickbar mt10">
+      <button class="qbtn" id="rtSaveShot" type="button">Save Tracked Shot</button>
+      <button class="qbtn" id="rtExportJson" type="button">Export JSON</button>
+      <button class="qbtn" id="rtClear" type="button">Clear Round Data</button>
+    </div>
+    <div id="rtStatus" class="minihelp mt8"></div>
+    <div id="rtSummary" class="minihelp mt8"></div>
   </div>
 
 
@@ -855,6 +891,64 @@ function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—';}
   [totalEl, unitEl, incEl, roundingEl, speedEl].forEach(e=>e.addEventListener('input', build));
   document.querySelectorAll('.qbtn[data-a]').forEach(b=>b.addEventListener('click', ()=>{ totalEl.value=b.dataset.a; build(); }));
   build();
+
+  // --- Round Tracker ---
+  const rt = {
+    section: 'Approach', club: null, shots: JSON.parse(localStorage.getItem('rule12_round_shots') || '[]'),
+    status: document.getElementById('rtStatus'), summary: document.getElementById('rtSummary')
+  };
+  const clubGrid = document.getElementById('clubGrid');
+  for(let i=1;i<=14;i++){
+    const b=document.createElement('button');
+    b.className='qbtn club-btn';
+    b.type='button';
+    b.textContent = `${i}${i===1?' D':i===14?' P':''}`;
+    b.dataset.club=String(i);
+    b.addEventListener('click',()=>{ rt.club=i; document.querySelectorAll('.club-btn').forEach(x=>x.classList.toggle('active', Number(x.dataset.club)===i)); });
+    clubGrid?.appendChild(b);
+  }
+  document.querySelectorAll('.section-btn').forEach(b=>b.addEventListener('click', ()=>{
+    rt.section=b.dataset.section || 'Approach';
+    document.querySelectorAll('.section-btn').forEach(x=>x.classList.toggle('active', x===b));
+  }));
+  document.querySelector('.section-btn[data-section="Approach"]')?.classList.add('active');
+  function renderRoundSummary(){
+    const byClub = {};
+    rt.shots.forEach(s=>{ byClub[s.club]=byClub[s.club]||{count:0,total:0}; byClub[s.club].count++; byClub[s.club].total += Number(s.carry)||0; });
+    const parts = Object.entries(byClub).sort((a,b)=>Number(a[0])-Number(b[0])).map(([c,v])=>`C${c}: avg ${(v.total/v.count).toFixed(1)} (${v.count})`);
+    rt.summary.textContent = parts.length ? `Club carry averages — ${parts.join(' | ')}` : 'No tracked shots yet.';
+  }
+  document.getElementById('rtSaveShot')?.addEventListener('click', ()=>{
+    const start=parseFloat(document.getElementById('rtStart').value||'NaN');
+    const end=parseFloat(document.getElementById('rtEnd').value||'NaN');
+    if(!rt.club){ rt.status.textContent='Select a club first.'; return; }
+    if(!isFinite(start) || !isFinite(end)){ rt.status.textContent='Enter valid start/end distance.'; return; }
+    const shot = {
+      ts:new Date().toISOString(), section:rt.section, club:rt.club, start, end, carry:Math.max(0,start-end),
+      strike:document.getElementById('rtStrike').value, shape:document.getElementById('rtShape').value,
+      puttClock:document.getElementById('rtClock').value, notes:document.getElementById('rtNotes').value || ''
+    };
+    rt.shots.push(shot);
+    localStorage.setItem('rule12_round_shots', JSON.stringify(rt.shots));
+    rt.status.textContent=`Saved ${rt.section} shot | Club ${rt.club} | Carry ${shot.carry.toFixed(1)}.`;
+    renderRoundSummary();
+  });
+  document.getElementById('rtExportJson')?.addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(rt.shots, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `rule12-round-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    rt.status.textContent='Exported JSON. Upload this file to Dropbox/Drive for cross-device sync.';
+  });
+  document.getElementById('rtClear')?.addEventListener('click', ()=>{
+    rt.shots = [];
+    localStorage.removeItem('rule12_round_shots');
+    rt.status.textContent='Cleared saved round data on this device.';
+    renderRoundSummary();
+  });
+  renderRoundSummary();
 })();
 </script>
 </body>
