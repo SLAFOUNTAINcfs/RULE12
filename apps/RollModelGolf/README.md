@@ -6,6 +6,7 @@ Gameplay notes:
 - All listed values are made-up total-distance gameplay targets.
 - All distances are total distance, not carry.
 - Printed numbers are game targets, not personal club recommendations.
+- Rarity tiers are weighted and independently rolled: Common (50%), Rare (30%), Epic (15%), Legendary (5%).
 
 Contents:
 - `index.html`: standalone Roll Model Golf experience
@@ -14,10 +15,11 @@ Contents:
 - `svg/`: responsive dark-mode SVG result cards
 
 Integration behavior:
-- Load `results.json`.
-- Flip once (Heads/Female, Tails/Male) and roll once (die 1–6).
-- Lock one matching profile for the full round until reset.
+- Load `results.json` (48 profiles: 2 genders x 6 age groups x 4 rarities).
+- Independently roll coin (Heads/Female, Tails/Male), die (1-6), and rarity (Common/Rare/Epic/Legendary).
+- Match and lock one profile by gender + age group + rarity for the full round until reset.
 - Use the closest listed total distance and attempt that total with the assigned club.
+- Putter is never a distance target but is always allowed on the putting surface.
 
 Technical notes:
 - The app uses cryptographically strong random values when available.
