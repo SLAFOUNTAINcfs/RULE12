@@ -1,83 +1,125 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
-<style>
-.title{font:700 52px Arial,sans-serif;fill:#202622}
-.header{font:700 34px Arial,sans-serif;fill:white}
-.sub{font:700 25px Arial,sans-serif;fill:white}
-.small{font:400 20px Arial,sans-serif;fill:white}
-.label{font:700 23px Arial,sans-serif;fill:#173F2B}
-.tee{font:700 42px Arial,sans-serif;fill:#202622}
-.tablehead{font:700 25px Arial,sans-serif;fill:#5E6661}
-.club{font:700 24px Arial,sans-serif;fill:#202622}
-.target{font:700 25px Arial,sans-serif;fill:#202622}
-.rulehead{font:700 25px Arial,sans-serif;fill:#20364F}
-.rule{font:400 18px Arial,sans-serif;fill:#202622}
-.footer{font:700 17px Arial,sans-serif;fill:#5E6661}
-</style>
-<rect width="1080" height="1350" fill="#F4F0E4"/>
-<rect x="34" y="34" rx="36" ry="36" width="1012" height="1282" fill="white" stroke="#202622" stroke-width="4"/>
-<path d="M70 34H1010A36 36 0 0 1 1046 70V245H34V70A36 36 0 0 1 70 34Z" fill="#20364F"/>
-<circle cx="141" cy="147" r="65" fill="#C79A2B" stroke="white" stroke-width="4"/>
-<text x="141" y="169" text-anchor="middle" font-family="Arial" font-size="64" font-weight="700" fill="white">T</text>
-<rect x="875" y="82" rx="22" ry="22" width="129" height="129" fill="white"/>
-<text x="940" y="171" text-anchor="middle" font-family="Arial" font-size="68" font-weight="700" fill="#20364F">1</text>
-<text x="235" y="113" class="header">TAILS • MALE</text>
-<text x="235" y="159" class="sub">LOCKED FOR ALL 18 HOLES</text>
-<text x="235" y="201" class="small">ONE FLIP. ONE ROLL. ONE CHOICE.</text>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 420 1040"
+  preserveAspectRatio="xMidYMin meet"
+  role="img"
+  aria-labelledby="card-title card-description"
+>
+  <title id="card-title">Roll Model Golf result</title>
+  <desc id="card-description">Tails, die roll 1, Male Age 10, tee 4,200 yards, and total-distance club targets.</desc>
+  <style>
+    .bg { fill: #0F1218; }
+    .card { fill: #171B23; stroke: #2A3240; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+    .section { fill: #1D2330; stroke: #2A3240; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+    .notice { fill: #1D2330; stroke: #F2C94C; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+    .head { font-family: Arial, Helvetica, sans-serif; font-size: 24px; font-weight: 700; fill: #F4F7FB; }
+    .tag { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: 700; fill: #F2C94C; }
+    .meta { font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 700; fill: #F4F7FB; }
+    .locktext { font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: 700; fill: #6FCF97; }
+    .age { font-family: Arial, Helvetica, sans-serif; font-size: 29px; font-weight: 800; fill: #F4F7FB; }
+    .teelabel { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: 700; fill: #4EA1FF; }
+    .teevalue { font-family: Arial, Helvetica, sans-serif; font-size: 28px; font-weight: 800; fill: #F4F7FB; }
+    .noticecopy { font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: 700; fill: #F2994A; }
+    .th { font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: 700; fill: #F2C94C; }
+    .club { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: 700; fill: #F4F7FB; }
+    .yards { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: 800; fill: #F4F7FB; }
+    .rh { font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 700; fill: #F4F7FB; }
+    .rt { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: 700; fill: #AAB3C2; }
+    .foot { font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: 700; fill: #AAB3C2; }
+  </style>
 
-<text x="540" y="318" text-anchor="middle" class="title">AGE 10</text>
+  <rect class="bg" x="0" y="0" width="420" height="1040"/>
+  <rect class="card" x="8" y="8" width="404" height="1024" rx="22"/>
 
-<rect x="78" y="345" rx="22" ry="22" width="924" height="110" fill="#F4F0E4" stroke="#D5D8D3" stroke-width="3"/>
-<text x="112" y="402" class="label">PLAY THE AVAILABLE TEE CLOSEST TO</text>
-<text x="968" y="423" text-anchor="end" class="tee">3,200 YARDS</text>
+  <rect class="card" x="8" y="8" width="404" height="182" rx="22"/>
+  <rect x="8" y="8" width="404" height="8" rx="4" fill="#4EA1FF"/>
+  <text x="22" y="42" class="head">Roll Model Golf</text>
+  <text x="22" y="61" class="tag">One Flip. One Roll. One Choice.</text>
 
-<rect x="78" y="490" rx="18" ry="18" width="924" height="550" fill="white" stroke="#D5D8D3" stroke-width="3"/>
-<rect x="80" y="492" width="920" height="58" fill="#F7F8F5"/>
-<text x="110" y="532" class="tablehead">CLUB</text>
-<text x="968" y="532" text-anchor="end" class="tablehead">TARGET</text>
+  <circle cx="56" cy="120" r="31" fill="#4EA1FF"/>
+  <text x="56" y="127" text-anchor="middle" class="meta" fill="#0F1218">T</text>
+  <text x="96" y="117" class="meta">TAILS · MALE</text>
+  <text x="96" y="139" class="meta">DIE 1</text>
 
-        <rect x="80" y="569" width="920" height="42" fill="#FFFFFF"/>
-        <text x="110" y="597" class="club">Driver</text>
-        <text x="968" y="597" class="target" text-anchor="end">100 yd</text>
-        <rect x="80" y="609" width="920" height="42" fill="#FBFBF8"/>
-        <text x="110" y="637" class="club">3-Wood</text>
-        <text x="968" y="637" class="target" text-anchor="end">93 yd</text>
-        <rect x="80" y="649" width="920" height="42" fill="#FFFFFF"/>
-        <text x="110" y="677" class="club">5-Wood</text>
-        <text x="968" y="677" class="target" text-anchor="end">88 yd</text>
-        <rect x="80" y="689" width="920" height="42" fill="#FBFBF8"/>
-        <text x="110" y="717" class="club">Hybrid</text>
-        <text x="968" y="717" class="target" text-anchor="end">83 yd</text>
-        <rect x="80" y="729" width="920" height="42" fill="#FFFFFF"/>
-        <text x="110" y="757" class="club">5-Iron</text>
-        <text x="968" y="757" class="target" text-anchor="end">77 yd</text>
-        <rect x="80" y="769" width="920" height="42" fill="#FBFBF8"/>
-        <text x="110" y="797" class="club">6-Iron</text>
-        <text x="968" y="797" class="target" text-anchor="end">71 yd</text>
-        <rect x="80" y="809" width="920" height="42" fill="#FFFFFF"/>
-        <text x="110" y="837" class="club">7-Iron</text>
-        <text x="968" y="837" class="target" text-anchor="end">65 yd</text>
-        <rect x="80" y="849" width="920" height="42" fill="#FBFBF8"/>
-        <text x="110" y="877" class="club">8-Iron</text>
-        <text x="968" y="877" class="target" text-anchor="end">58 yd</text>
-        <rect x="80" y="889" width="920" height="42" fill="#FFFFFF"/>
-        <text x="110" y="917" class="club">9-Iron</text>
-        <text x="968" y="917" class="target" text-anchor="end">52 yd</text>
-        <rect x="80" y="929" width="920" height="42" fill="#FBFBF8"/>
-        <text x="110" y="957" class="club">PW</text>
-        <text x="968" y="957" class="target" text-anchor="end">45 yd</text>
-        <rect x="80" y="969" width="920" height="42" fill="#FFFFFF"/>
-        <text x="110" y="997" class="club">GW</text>
-        <text x="968" y="997" class="target" text-anchor="end">40 yd</text>
-        <rect x="80" y="1009" width="920" height="42" fill="#FBFBF8"/>
-        <text x="110" y="1037" class="club">SW</text>
-        <text x="968" y="1037" class="target" text-anchor="end">34 yd</text>
+  <rect x="284" y="97" width="116" height="44" rx="10" fill="#0F1218" stroke="#2A3240" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
+  <g transform="translate(342 102)">
+    <rect x="-8" y="8" width="16" height="13" rx="2" fill="#6FCF97"/>
+    <path d="M-4 8V5a4 4 0 0 1 8 0v3" fill="none" stroke="#6FCF97" stroke-width="2" vector-effect="non-scaling-stroke"/>
+  </g>
+  <text x="342" y="136" text-anchor="middle" class="locktext">LOCKED IN</text>
+  
 
-<rect x="78" y="1075" rx="22" ry="22" width="924" height="180" fill="#F7F8F5" stroke="#D5D8D3" stroke-width="3"/>
-<text x="108" y="1127" class="rulehead">HOW TO USE THIS RESULT</text>
-<circle cx="115" cy="1161" r="5" fill="#C79A2B"/><text x="136" y="1168" class="rule">Use the club whose printed target is closest to the shot distance.</text>
-<circle cx="115" cy="1189" r="5" fill="#C79A2B"/><text x="136" y="1196" class="rule">You must attempt that distance with that assigned club.</text>
-<circle cx="115" cy="1217" r="5" fill="#C79A2B"/><text x="136" y="1224" class="rule">Driver approach: Driver off the deck OR next-closest wood/hybrid/iron.</text>
-<circle cx="115" cy="1245" r="5" fill="#C79A2B"/><text x="136" y="1252" class="rule">The target never changes. Putter is always allowed on the green.</text>
+  <text x="210" y="246" text-anchor="middle" class="age">AGE 10</text>
 
-<text x="78" y="1304" class="footer">RESULT ASSET • ALL DISTANCES ARE TARGET CARRY YARDS</text>
+  <rect class="section" x="22" y="270" width="376" height="90" rx="14"/>
+  <text x="210" y="300" text-anchor="middle" class="teelabel">PLAY THE AVAILABLE TEE CLOSEST TO</text>
+  <text x="210" y="338" text-anchor="middle" class="teevalue">4,200 YARDS</text>
+
+  <rect class="notice" x="22" y="376" width="376" height="50" rx="12"/>
+  <text x="210" y="398" text-anchor="middle" class="noticecopy">ALL DISTANCES ARE TOTAL DISTANCE</text>
+  <text x="210" y="416" text-anchor="middle" class="noticecopy">NOT CARRY</text>
+
+  <rect class="section" x="22" y="440" width="376" height="415" rx="14"/>
+  <rect x="22" y="440" width="376" height="40" rx="14" fill="#151922"/>
+  <text x="34" y="465" class="th">CLUB</text>
+  <text x="382" y="465" class="th" text-anchor="end">TOTAL YARDS</text>
+  <rect x="22" y="484" width="376" height="23" fill="#1D2330"/>
+  <text x="34" y="500" class="club">Driver</text>
+  <text x="382" y="500" class="yards" text-anchor="end">210 yd</text>
+  <rect x="22" y="507" width="376" height="23" fill="#151922"/>
+  <text x="34" y="523" class="club">3W</text>
+  <text x="382" y="523" class="yards" text-anchor="end">175 yd</text>
+  <rect x="22" y="530" width="376" height="23" fill="#1D2330"/>
+  <text x="34" y="546" class="club">5W</text>
+  <text x="382" y="546" class="yards" text-anchor="end">150 yd</text>
+  <rect x="22" y="553" width="376" height="23" fill="#151922"/>
+  <text x="34" y="569" class="club">H1/I2</text>
+  <text x="382" y="569" class="yards" text-anchor="end">125 yd</text>
+  <rect x="22" y="576" width="376" height="23" fill="#1D2330"/>
+  <text x="34" y="592" class="club">3-Iron</text>
+  <text x="382" y="592" class="yards" text-anchor="end">123 yd</text>
+  <rect x="22" y="599" width="376" height="23" fill="#151922"/>
+  <text x="34" y="615" class="club">4-Iron</text>
+  <text x="382" y="615" class="yards" text-anchor="end">118 yd</text>
+  <rect x="22" y="622" width="376" height="23" fill="#1D2330"/>
+  <text x="34" y="638" class="club">5-Iron</text>
+  <text x="382" y="638" class="yards" text-anchor="end">113 yd</text>
+  <rect x="22" y="645" width="376" height="23" fill="#151922"/>
+  <text x="34" y="661" class="club">6-Iron</text>
+  <text x="382" y="661" class="yards" text-anchor="end">109 yd</text>
+  <rect x="22" y="668" width="376" height="23" fill="#1D2330"/>
+  <text x="34" y="684" class="club">7-Iron</text>
+  <text x="382" y="684" class="yards" text-anchor="end">105 yd</text>
+  <rect x="22" y="691" width="376" height="23" fill="#151922"/>
+  <text x="34" y="707" class="club">8-Iron</text>
+  <text x="382" y="707" class="yards" text-anchor="end">95 yd</text>
+  <rect x="22" y="714" width="376" height="23" fill="#1D2330"/>
+  <text x="34" y="730" class="club">9-Iron</text>
+  <text x="382" y="730" class="yards" text-anchor="end">85 yd</text>
+  <rect x="22" y="737" width="376" height="23" fill="#151922"/>
+  <text x="34" y="753" class="club">PW</text>
+  <text x="382" y="753" class="yards" text-anchor="end">83 yd</text>
+  <rect x="22" y="760" width="376" height="23" fill="#1D2330"/>
+  <text x="34" y="776" class="club">GW</text>
+  <text x="382" y="776" class="yards" text-anchor="end">72 yd</text>
+  <rect x="22" y="783" width="376" height="23" fill="#151922"/>
+  <text x="34" y="799" class="club">SW</text>
+  <text x="382" y="799" class="yards" text-anchor="end">60 yd</text>
+  <rect x="22" y="806" width="376" height="23" fill="#1D2330"/>
+  <text x="34" y="822" class="club">LW</text>
+  <text x="382" y="822" class="yards" text-anchor="end">45 yd</text>
+  <rect x="22" y="829" width="376" height="23" fill="#151922"/>
+  <text x="34" y="845" class="club">Putter</text>
+  <text x="382" y="845" class="yards" text-anchor="end">ON GREEN</text>
+
+  <rect class="section" x="22" y="875" width="376" height="126" rx="14"/>
+  <text x="34" y="900" class="rh">PLAY THIS RESULT</text>
+  <text x="34" y="922" class="rt">Use the club with the closest listed total distance.</text>
+  <text x="34" y="940" class="rt">Then attempt to hit that required total distance.</text>
+  <text x="34" y="958" class="rt">Driver approach: Driver off the deck or next-closest</text>
+  <text x="34" y="976" class="rt">available wood, hybrid, or iron.</text>
+  <text x="34" y="992" class="rt">Required distance stays the same.</text>
+
+  
+  <text x="210" y="1020" text-anchor="middle" class="foot">TOTAL-DISTANCE GAME TARGETS</text>
 </svg>

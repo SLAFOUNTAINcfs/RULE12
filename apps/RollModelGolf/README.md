@@ -2,21 +2,23 @@
 
 Tagline: One Flip. One Roll. One Choice.
 
+Gameplay notes:
+- All listed values are made-up total-distance gameplay targets.
+- All distances are total distance, not carry.
+- Printed numbers are game targets, not personal club recommendations.
+
 Contents:
-- `index.html`: standalone working Roll Model Golf demo
-- `results.json`: manifest for all 12 outcomes
-- `png/`: 12 app-ready PNG result cards (1080×1350)
-- `svg/`: 12 scalable vector result cards
+- `index.html`: standalone Roll Model Golf experience
+- `results.json`: profile manifest and source-of-truth data
+- `png/`: legacy PNG assets
+- `svg/`: responsive dark-mode SVG result cards
 
-To test:
-1. Keep the folder structure intact.
-2. Open `index.html` in a browser.
-3. Press **Randomize My Round**.
-
-App integration:
+Integration behavior:
 - Load `results.json`.
-- Randomly select Heads/Tails and a die value from 1–6.
-- Find the profile matching `coinResult` and `dieRoll`.
-- Display the `image` or `svg` asset path.
+- Flip once (Heads/Female, Tails/Male) and roll once (die 1–6).
+- Lock one matching profile for the full round until reset.
+- Use the closest listed total distance and attempt that total with the assigned club.
 
-The standalone demo uses `crypto.getRandomValues()` where available.
+Technical notes:
+- The app uses cryptographically strong random values when available.
+- SVG cards are mobile-first and scale via `viewBox` with CSS `width: 100%` and `height: auto`.
