@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 1320" preserveAspectRatio="xMidYMin meet" role="img" aria-labelledby="title desc">
+  <title id="title">Roll Model Golf result card for Male Age 10 Epic</title>
+  <desc id="desc">Total-distance game targets. Locked for all 18 holes.</desc>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#101722"/>
+      <stop offset="100%" stop-color="#0B111A"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="404" height="1304" rx="24" fill="url(#bgGrad)" stroke="#B56CFF" stroke-width="3"/>
+  <rect x="22" y="22" width="376" height="1276" rx="18" fill="none" stroke="#B56CFF28" stroke-width="3"/>
+  <text x="210" y="68" text-anchor="middle" class="brand">Roll Model Golf</text>
+  <text x="210" y="95" text-anchor="middle" class="sub">One Flip. One Roll. One Choice.</text>
+  <g>
+    <rect x="132" y="110" width="156" height="36" rx="18" fill="#0F1725" stroke="#B56CFF" stroke-width="2"/>
+    <text x="210" y="134" text-anchor="middle" class="rarity">EPIC</text>
+  </g>
+  
+  <g>
+    <rect x="24" y="190" width="372" height="168" rx="14" fill="#141D2A" stroke="#2A3445"/>
+    <text x="40" y="224" class="meta">Coin: Tails (Male)</text>
+    <text x="40" y="252" class="meta">Die: 1 (Age 10)</text>
+    <text x="40" y="280" class="meta">Rarity: Epic</text>
+    <text x="40" y="308" class="meta">Performance: Low Handicap</text>
+    <text x="40" y="336" class="meta">Target tee yardage: 4200 yd</text>
+  </g>
+  <text x="210" y="386" text-anchor="middle" class="note">All distances are total distance, not carry.</text>
+  <g>
+    <rect x="24" y="406" width="372" height="112" rx="14" fill="#141D2A" stroke="#2A3445"/>
+    <text x="40" y="434" class="head">EPIC DISTANCE WINDOW</text>
+    <text x="40" y="462" class="metaSmall">±10% of required total distance</text>
+    <text x="40" y="486" class="metaSmall">0.50 strokes per successful hit</text>
+    <text x="40" y="510" class="metaSmall">FRONT-TO-BACK DISTANCE WINDOW</text>
+  </g>
+  <g>
+    <text x="28" y="542" class="head">CLUB TARGETS</text>
+    <line x1="26" y1="554" x2="394" y2="554" stroke="#2A3445"/>
+    <rect x="26" y="570" width="368" height="28" rx="8" fill="#131A25"/><text x="40" y="589" class="club">Driver</text><text x="378" y="589" text-anchor="end" class="val">210 yd</text><rect x="26" y="601" width="368" height="28" rx="8" fill="#1A2230"/><text x="40" y="620" class="club">3-Wood</text><text x="378" y="620" text-anchor="end" class="val">175 yd</text><rect x="26" y="632" width="368" height="28" rx="8" fill="#131A25"/><text x="40" y="651" class="club">5-Wood</text><text x="378" y="651" text-anchor="end" class="val">150 yd</text><rect x="26" y="663" width="368" height="28" rx="8" fill="#1A2230"/><text x="40" y="682" class="club">H1 / 2-Iron</text><text x="378" y="682" text-anchor="end" class="val">125 yd</text><rect x="26" y="694" width="368" height="28" rx="8" fill="#131A25"/><text x="40" y="713" class="club">3-Iron</text><text x="378" y="713" text-anchor="end" class="val">123 yd</text><rect x="26" y="725" width="368" height="28" rx="8" fill="#1A2230"/><text x="40" y="744" class="club">4-Iron</text><text x="378" y="744" text-anchor="end" class="val">118 yd</text><rect x="26" y="756" width="368" height="28" rx="8" fill="#131A25"/><text x="40" y="775" class="club">5-Iron</text><text x="378" y="775" text-anchor="end" class="val">113 yd</text><rect x="26" y="787" width="368" height="28" rx="8" fill="#1A2230"/><text x="40" y="806" class="club">6-Iron</text><text x="378" y="806" text-anchor="end" class="val">109 yd</text><rect x="26" y="818" width="368" height="28" rx="8" fill="#131A25"/><text x="40" y="837" class="club">7-Iron</text><text x="378" y="837" text-anchor="end" class="val">105 yd</text><rect x="26" y="849" width="368" height="28" rx="8" fill="#1A2230"/><text x="40" y="868" class="club">8-Iron</text><text x="378" y="868" text-anchor="end" class="val">95 yd</text><rect x="26" y="880" width="368" height="28" rx="8" fill="#131A25"/><text x="40" y="899" class="club">9-Iron</text><text x="378" y="899" text-anchor="end" class="val">85 yd</text><rect x="26" y="911" width="368" height="28" rx="8" fill="#1A2230"/><text x="40" y="930" class="club">PW</text><text x="378" y="930" text-anchor="end" class="val">83 yd</text><rect x="26" y="942" width="368" height="28" rx="8" fill="#131A25"/><text x="40" y="961" class="club">GW</text><text x="378" y="961" text-anchor="end" class="val">72 yd</text><rect x="26" y="973" width="368" height="28" rx="8" fill="#1A2230"/><text x="40" y="992" class="club">SW</text><text x="378" y="992" text-anchor="end" class="val">60 yd</text><rect x="26" y="1004" width="368" height="28" rx="8" fill="#131A25"/><text x="40" y="1023" class="club">LW</text><text x="378" y="1023" text-anchor="end" class="val">45 yd</text>
+  </g>
+  <g>
+    <rect x="24" y="1146" width="372" height="142" rx="14" fill="#141D2A" stroke="#2A3445"/>
+    <text x="210" y="1174" text-anchor="middle" class="lock">Locked for all 18 holes</text>
+    <text x="210" y="1202" text-anchor="middle" class="rule">Driver off the deck allowed, or use the</text>
+    <text x="210" y="1224" text-anchor="middle" class="rule">next-closest fairway wood, hybrid, or iron.</text>
+    <text x="210" y="1248" text-anchor="middle" class="rule">Putter is always allowed on the putting surface.</text>
+  </g>
+  <style>
+    .brand{fill:#F4F7FB;font:700 27px 'Segoe UI',sans-serif;letter-spacing:.3px}
+    .sub{fill:#AAB3C2;font:600 14px 'Segoe UI',sans-serif}
+    .rarity{fill:#B56CFF;font:800 16px 'Segoe UI',sans-serif;letter-spacing:1.2px}
+    .meta{fill:#E7ECF7;font:600 15px 'Segoe UI',sans-serif}
+    .metaSmall{fill:#D7DFED;font:600 14px 'Segoe UI',sans-serif}
+    .note{fill:#AAB3C2;font:600 13px 'Segoe UI',sans-serif}
+    .head{fill:#B56CFF;font:700 15px 'Segoe UI',sans-serif;letter-spacing:.8px}
+    .club{fill:#E7ECF7;font:600 14px 'Segoe UI',sans-serif}
+    .val{fill:#F4F7FB;font:700 14px 'Segoe UI',sans-serif}
+    .lock{fill:#B56CFF;font:800 16px 'Segoe UI',sans-serif}
+    .rule{fill:#C2CBDC;font:600 12px 'Segoe UI',sans-serif}
+  </style>
+</svg>
