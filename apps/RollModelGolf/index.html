@@ -126,7 +126,7 @@ th{background:var(--surface);color:var(--muted)}
 
   <section id="playSection" class="card no-print hidden">
     <h2>Next Shot: Select the Total Yardage Target</h2>
-    <p class="muted">Select the nearest total yardage needed for your next shot. Example: if your next shot is 280 total yards, choose <span id="closestTo280Yardage"></span> based on your current card (max listed total: <span id="cardMaxYardage"></span>).</p>
+    <p class="muted">Select the nearest total yardage needed for your next shot. Example: if your next shot is 400 total yards, choose <span id="closestTo400Yardage"></span> based on your current card (max listed total: <span id="cardMaxYardage"></span>).</p>
     <div id="distanceGrid" class="distance-grid mt8"></div>
     <div id="playOut" class="mt8"></div>
     <div class="actions mt8">
@@ -183,6 +183,7 @@ const LEGACY_BAG_KEYS=['rule12_challenge_bag_v1'];
 const CLUB_ORDER=['Driver','3W','5W','H1/I2','3-Iron','4-Iron','5-Iron','6-Iron','7-Iron','8-Iron','9-Iron','PW','GW','SW','LW','Putter'];
 const ASSIGNABLE_CLUB_ORDER=CLUB_ORDER.filter((club)=>club!=='Putter');
 const BAG_ORDER=[...CLUB_ORDER];
+const REFERENCE_SHOT_YARDAGE=400;
 const EMBEDDED_RESULTS={"game":"Roll Model Golf","tagline":"One Flip. One Roll. One Choice.","distanceType":"total","version":3,"profiles":[{"id":"female-age-10","gender":"Female","coinResult":"Heads","dieRoll":1,"ageGroup":"Age 10","teeYardage":3600,"clubs":{"Driver":180,"3W":150,"5W":130,"H1/I2":110,"3-Iron":108,"4-Iron":103,"5-Iron":98,"6-Iron":94,"7-Iron":90,"8-Iron":80,"9-Iron":70,"PW":68,"GW":59,"SW":50,"LW":35,"Putter":0},"image":"png/female-age-10.png","svg":"svg/female-age-10.svg"},{"id":"female-18-29","gender":"Female","coinResult":"Heads","dieRoll":2,"ageGroup":"Ages 18–29","teeYardage":4800,"clubs":{"Driver":230,"3W":200,"5W":170,"H1/I2":145,"3-Iron":138,"4-Iron":133,"5-Iron":128,"6-Iron":124,"7-Iron":120,"8-Iron":108,"9-Iron":95,"PW":93,"GW":82,"SW":70,"LW":55,"Putter":0},"image":"png/female-18-29.png","svg":"svg/female-18-29.svg"},{"id":"female-30-44","gender":"Female","coinResult":"Heads","dieRoll":3,"ageGroup":"Ages 30–44","teeYardage":5200,"clubs":{"Driver":240,"3W":210,"5W":180,"H1/I2":150,"3-Iron":143,"4-Iron":138,"5-Iron":133,"6-Iron":129,"7-Iron":125,"8-Iron":113,"9-Iron":100,"PW":98,"GW":87,"SW":75,"LW":60,"Putter":0},"image":"png/female-30-44.png","svg":"svg/female-30-44.svg"},{"id":"female-45-59","gender":"Female","coinResult":"Heads","dieRoll":4,"ageGroup":"Ages 45–59","teeYardage":4600,"clubs":{"Driver":210,"3W":180,"5W":155,"H1/I2":130,"3-Iron":128,"4-Iron":123,"5-Iron":118,"6-Iron":114,"7-Iron":110,"8-Iron":100,"9-Iron":90,"PW":88,"GW":77,"SW":65,"LW":50,"Putter":0},"image":"png/female-45-59.png","svg":"svg/female-45-59.svg"},{"id":"female-60-74","gender":"Female","coinResult":"Heads","dieRoll":5,"ageGroup":"Ages 60–74","teeYardage":4000,"clubs":{"Driver":185,"3W":160,"5W":135,"H1/I2":115,"3-Iron":118,"4-Iron":113,"5-Iron":108,"6-Iron":104,"7-Iron":100,"8-Iron":90,"9-Iron":80,"PW":78,"GW":67,"SW":55,"LW":40,"Putter":0},"image":"png/female-60-74.png","svg":"svg/female-60-74.svg"},{"id":"female-75-plus","gender":"Female","coinResult":"Heads","dieRoll":6,"ageGroup":"Ages 75+","teeYardage":3200,"clubs":{"Driver":155,"3W":130,"5W":110,"H1/I2":95,"3-Iron":98,"4-Iron":93,"5-Iron":88,"6-Iron":84,"7-Iron":80,"8-Iron":73,"9-Iron":65,"PW":63,"GW":54,"SW":45,"LW":30,"Putter":0},"image":"png/female-75-plus.png","svg":"svg/female-75-plus.svg"},{"id":"male-age-10","gender":"Male","coinResult":"Tails","dieRoll":1,"ageGroup":"Age 10","teeYardage":4200,"clubs":{"Driver":210,"3W":175,"5W":150,"H1/I2":125,"3-Iron":123,"4-Iron":118,"5-Iron":113,"6-Iron":109,"7-Iron":105,"8-Iron":95,"9-Iron":85,"PW":83,"GW":72,"SW":60,"LW":45,"Putter":0},"image":"png/male-age-10.png","svg":"svg/male-age-10.svg"},{"id":"male-18-29","gender":"Male","coinResult":"Tails","dieRoll":2,"ageGroup":"Ages 18–29","teeYardage":6400,"clubs":{"Driver":290,"3W":250,"5W":215,"H1/I2":180,"3-Iron":171,"4-Iron":163,"5-Iron":158,"6-Iron":154,"7-Iron":150,"8-Iron":135,"9-Iron":120,"PW":118,"GW":102,"SW":85,"LW":70,"Putter":0},"image":"png/male-18-29.png","svg":"svg/male-18-29.svg"},{"id":"male-30-44","gender":"Male","coinResult":"Tails","dieRoll":3,"ageGroup":"Ages 30–44","teeYardage":6900,"clubs":{"Driver":310,"3W":265,"5W":225,"H1/I2":190,"3-Iron":181,"4-Iron":168,"5-Iron":163,"6-Iron":159,"7-Iron":155,"8-Iron":140,"9-Iron":125,"PW":123,"GW":107,"SW":90,"LW":75,"Putter":0},"image":"png/male-30-44.png","svg":"svg/male-30-44.svg"},{"id":"male-45-59","gender":"Male","coinResult":"Tails","dieRoll":4,"ageGroup":"Ages 45–59","teeYardage":6200,"clubs":{"Driver":280,"3W":240,"5W":205,"H1/I2":170,"3-Iron":162,"4-Iron":153,"5-Iron":148,"6-Iron":144,"7-Iron":140,"8-Iron":128,"9-Iron":115,"PW":113,"GW":97,"SW":80,"LW":65,"Putter":0},"image":"png/male-45-59.png","svg":"svg/male-45-59.svg"},{"id":"male-60-74","gender":"Male","coinResult":"Tails","dieRoll":5,"ageGroup":"Ages 60–74","teeYardage":5600,"clubs":{"Driver":250,"3W":215,"5W":185,"H1/I2":155,"3-Iron":148,"4-Iron":143,"5-Iron":138,"6-Iron":134,"7-Iron":130,"8-Iron":118,"9-Iron":105,"PW":103,"GW":89,"SW":75,"LW":60,"Putter":0},"image":"png/male-60-74.png","svg":"svg/male-60-74.svg"},{"id":"male-75-plus","gender":"Male","coinResult":"Tails","dieRoll":6,"ageGroup":"Ages 75+","teeYardage":4600,"clubs":{"Driver":205,"3W":175,"5W":145,"H1/I2":120,"3-Iron":118,"4-Iron":113,"5-Iron":108,"6-Iron":104,"7-Iron":100,"8-Iron":90,"9-Iron":80,"PW":78,"GW":67,"SW":55,"LW":40,"Putter":0},"image":"png/male-75-plus.png","svg":"svg/male-75-plus.svg"}]};
 const state={profiles:[],pending:null,active:null,bag:{},selectedDistance:null};
 
@@ -190,7 +191,7 @@ const els={
   randomizeBtn:document.getElementById('randomizeBtn'),resumeBtn:document.getElementById('resumeBtn'),resetBtn:document.getElementById('resetBtn'),printBtn:document.getElementById('printBtn'),
   liveStatus:document.getElementById('liveStatus'),pendingSection:document.getElementById('pendingSection'),pendingMeta:document.getElementById('pendingMeta'),confirmBtn:document.getElementById('confirmBtn'),
   activeSection:document.getElementById('activeSection'),activeMeta:document.getElementById('activeMeta'),activeCard:document.getElementById('activeCard'),
-  playSection:document.getElementById('playSection'),distanceGrid:document.getElementById('distanceGrid'),playOut:document.getElementById('playOut'),playResetBtn:document.getElementById('playResetBtn'),teeYardage:document.getElementById('teeYardage'),cardMaxYardage:document.getElementById('cardMaxYardage'),closestTo280Yardage:document.getElementById('closestTo280Yardage'),
+  playSection:document.getElementById('playSection'),distanceGrid:document.getElementById('distanceGrid'),playOut:document.getElementById('playOut'),playResetBtn:document.getElementById('playResetBtn'),teeYardage:document.getElementById('teeYardage'),cardMaxYardage:document.getElementById('cardMaxYardage'),closestReferenceYardage:document.getElementById('closestTo400Yardage')||document.getElementById('closestTo280Yardage'),
   bagSection:document.getElementById('bagSection'),bagGrid:document.getElementById('bagGrid'),rulesSection:document.getElementById('rulesSection'),
   printCardsSection:document.getElementById('printCardsSection'),printGrid:document.getElementById('printGrid'),
   zoomOverlay:document.getElementById('zoomOverlay'),zoomImage:document.getElementById('zoomImage'),zoomCloseBtn:document.getElementById('zoomCloseBtn')
@@ -259,10 +260,12 @@ function migrateStorage(){
 
 async function loadProfiles(){
   let data=null;
-  try{
-    const res=await fetch('results.json');
-    if(res.ok) data=await res.json();
-  }catch(_e){}
+  if(window.location.protocol!=='file:'){
+    try{
+      const res=await fetch('results.json');
+      if(res.ok) data=await res.json();
+    }catch(_e){}
+  }
   if(!data) data=EMBEDDED_RESULTS;
   if(!Array.isArray(data.profiles)||data.profiles.length!==12) throw new Error('Expected 12 profiles in results.json.');
   if(data.game!=='Roll Model Golf') throw new Error('Unexpected game name in results.json.');
@@ -393,7 +396,7 @@ function renderState(){
     els.distanceGrid.innerHTML='';
     els.playOut.innerHTML='';
     els.cardMaxYardage.textContent='--';
-    els.closestTo280Yardage.textContent='--';
+    if(els.closestReferenceYardage) els.closestReferenceYardage.textContent='--';
     state.selectedDistance=null;
     return;
   }
@@ -416,9 +419,9 @@ function renderState(){
   els.activeCard.onclick=()=>openZoom(els.activeCard.currentSrc||els.activeCard.src, els.activeCard.alt);
   const distances=ASSIGNABLE_CLUB_ORDER.map((club)=>profile.clubs[club]).filter((d)=>Number.isFinite(d)&&d>0);
   const maxDistance=Math.max(...distances);
-  const closest280=closestClubDistance(280,profile.clubs);
+  const closestReference=closestClubDistance(REFERENCE_SHOT_YARDAGE,profile.clubs);
   els.cardMaxYardage.textContent=`${maxDistance} yd`;
-  els.closestTo280Yardage.textContent=`${closest280.distance} yd`;
+  if(els.closestReferenceYardage) els.closestReferenceYardage.textContent=`${closestReference.distance} yd`;
   renderDistanceButtons(profile);
 }
 
