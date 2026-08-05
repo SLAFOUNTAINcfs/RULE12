@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Landing Zone Calculator</title>
+  <style>
+    :root{--bg:#0f1115;--card:#171a21;--text:#eaeef5;--muted:#9aa3b2;--row:#222836}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{max-width:980px;margin:0 auto;padding:16px}
+    .card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 6px 24px rgba(0,0,0,.25);margin-bottom:12px}
+    h1{margin:0 0 8px;font-size:1.3rem}
+    label{font-size:.95rem;color:var(--muted);display:block;margin-bottom:6px}
+    input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a2f3a;background:#0e1117;color:var(--text);box-sizing:border-box}
+    .qbtn{padding:8px 10px;border-radius:10px;border:1px solid #2a2f3a;background:#10131a;color:var(--text);cursor:pointer;flex:0 0 auto}
+    .menu-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:8px;align-items:stretch}
+    .right-grid{display:grid;grid-template-columns:1fr;gap:8px}
+    .quickbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .table{overflow:auto;border-radius:12px;border:1px solid var(--row)}
+    .table-title{padding:8px 12px;text-align:center;color:var(--muted);font-weight:600;border-bottom:1px solid var(--row)}
+    .row{display:grid;grid-template-columns:repeat(2,minmax(160px,1fr));gap:6px;align-items:center}
+    .row.header{font-weight:600;color:var(--muted);position:sticky;top:0;background:var(--card);z-index:1}
+    .row div{padding:12px;border-bottom:1px solid var(--row);white-space:nowrap}
+    .row:last-child div{border-bottom:none}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#10131a;border:1px solid #2a2f3a;font-size:.85rem}
+    .mono{font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .cell{position:relative;overflow:hidden}
+    .cell::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:var(--col,transparent);border-right:1px solid rgba(255,255,255,.06)}
+    .c5{--col:#ff6b2c}.c6{--col:#f39c12}.c7{--col:#f1c40f}.c8{--col:#ffea00}.c9{--col:#9acd32}
+    .c10{--col:#2ecc71}.c11{--col:#2bb3b8}.c12{--col:#1e90ff}.c13{--col:#6f42c1}.c14{--col:#a445ed}
+    @media (max-width:520px){.menu-grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card"><h1>Landing Zone Calculator</h1></div>
+  <div class="card">
+    <div class="menu-grid">
+      <div>
+        <label for="total">Distance to Pin</label>
+        <input id="total" type="number" min="1" step="1" value="20">
+        <div class="quickbar">
+          <button class="qbtn" data-a="5">5</button><button class="qbtn" data-a="10">10</button><button class="qbtn" data-a="15">15</button>
+          <button class="qbtn" data-a="20">20</button><button class="qbtn" data-a="25">25</button><button class="qbtn" data-a="30">30</button>
+        </div>
+      </div>
+      <div class="right-grid">
+        <div><label for="unit">Distance Unit</label><select id="unit"><option value="yards">Yards</option><option value="feet">Feet</option></select></div>
+        <div><label for="speed">Green Speed</label><select id="speed"><option value="veryfast">very fast (Rule of 14)</option><option value="fast">fast (Rule of 13)</option><option value="normal" selected>normal (Rule of 12)</option><option value="slow">slow (Rule of 11)</option><option value="veryslow">very slow (Rule of 10)</option></select></div>
+        <div><label for="inc">Landing Increment</label><select id="inc"><option value="1">1</option><option value="0.5">0.5</option><option value="0.25">0.25</option></select></div>
+        <div><label for="rounding">Club Rounding</label><select id="rounding"><option value="round" selected>Nearest</option><option value="floor">Higher Flight</option><option value="ceil">Longer Rollout</option></select></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card table">
+    <div class="table-title">Landing Zone</div>
+    <div class="row header"><div>Chip Club</div><div>Lob Club</div></div>
+    <div id="rows"></div>
+  </div>
+</div>
+<script>
+const CLUB_NAME={5:'5i',6:'6i',7:'7i',8:'8i',9:'9i',10:'PW',11:'UW',12:'SW',13:'LW',14:'LW+'};
+const SPEEDS={veryfast:{base:14},fast:{base:13},normal:{base:12},slow:{base:11},veryslow:{base:10}};
+const clampClub=n=>Math.max(5,Math.min(14,n));
+const displayClubNum=n=>n>13?'13+':String(n);
+const roundBy=(x,mode)=>mode==='floor'?Math.floor(x):mode==='ceil'?Math.ceil(x):Math.round(x);
+const clubFromRule=(D,speedKey,mode)=>{const base=SPEEDS[speedKey].base;const raw=roundBy(base-D,mode);const n=clampClub(raw);return {clubNum:n,clubName:CLUB_NAME[n]};};
+const fmt=(n,d=2)=>Number.isFinite(n)?n.toFixed(d):'—';
+
+const totalEl=document.getElementById('total');
+const unitEl=document.getElementById('unit');
+const incEl=document.getElementById('inc');
+const roundingEl=document.getElementById('rounding');
+const speedEl=document.getElementById('speed');
+const rowsEl=document.getElementById('rows');
+
+function build(){
+  const A=parseFloat(totalEl.value||'0');
+  const step=parseFloat(incEl.value||'1');
+  const mode=roundingEl.value;
+  const speedKey=speedEl.value;
+  rowsEl.innerHTML='';
+  if(!A||A<=0||!step||step<=0) return;
+  const half=Math.floor((A/2)/step)*step;
+  const unitLabel=unitEl.value==='feet'?'ft':'yd';
+  for(let B=step; B<=half+1e-9; B+=step){
+    const C=A-B;
+    const D=C/B;
+    const chip=clubFromRule(D,speedKey,mode);
+    const row=document.createElement('div');
+    row.className='row';
+    row.innerHTML=`<div class="cell mono c${chip.clubNum}">${fmt(B,step%1?2:0)} ${unitLabel} — <span class="badge">${displayClubNum(chip.clubNum)}-${chip.clubName}</span></div><div class="cell mono c13">${fmt(C,step%1?2:0)} ${unitLabel} — <span class="badge">13-LW</span></div>`;
+    rowsEl.appendChild(row);
+  }
+}
+[totalEl,unitEl,incEl,roundingEl,speedEl].forEach(el=>el.addEventListener('input',build));
+document.querySelectorAll('.qbtn[data-a]').forEach(b=>b.addEventListener('click',()=>{totalEl.value=b.dataset.a;build();}));
+build();
+</script>
+</body>
+</html>

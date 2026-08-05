@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="Roll Model Golf. One Flip. One Roll. One Choice."/>
+<title>Roll Model Golf</title>
+<style>
+:root{color-scheme:light;--green:#173F2B;--gold:#C79A2B;--cream:#F4F0E4;--dark:#202622;--muted:#5e6661;--line:#d5d8d3}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--cream);color:var(--dark)}
+main{max-width:980px;margin:auto;padding:16px}
+.card{background:#fff;border:2px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+h1{margin:0 0 4px;font-size:clamp(1.8rem,6vw,2.8rem)}
+h2{margin:0 0 8px;font-size:1.35rem}
+.tag{margin:0 0 6px;font-size:1.1rem;font-weight:700;color:var(--green)}
+p{line-height:1.45;margin:6px 0}
+button,input,select{font:inherit}
+button{width:100%;min-height:52px;border:0;border-radius:12px;background:var(--green);color:#fff;font-weight:700;padding:10px 14px;cursor:pointer}
+button:hover{filter:brightness(1.06)}
+button:disabled{opacity:.58;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn-secondary{background:#37443a}
+.btn-danger{background:#7f1d1d}
+.btn-inline{width:auto;min-width:200px}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+label{display:block;font-weight:700;margin:0 0 4px}
+input,select{width:100%;min-height:48px;padding:8px 10px;border-radius:10px;border:1px solid #95a09a}
+.status{font-weight:700;min-height:1.3rem}
+.badge{display:inline-block;padding:6px 10px;background:#ecf4ef;border:1px solid #bfd4c7;border-radius:999px;font-weight:700;margin:2px 4px 2px 0}
+.muted{color:var(--muted)}
+.locked{color:#0f5132;font-weight:700}
+.warn{color:#9a3412;font-weight:700}
+.hidden{display:none !important}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse}
+th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left;white-space:nowrap}
+th{background:#f8f9f6}
+.result-image{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line);margin-top:8px}
+.bag-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.bag-item{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:8px}
+.bag-item input{width:auto;min-height:0}
+.rules{padding-left:18px}
+.print-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.print-card{border:2px dashed #9aa3b2;border-radius:10px;padding:8px;background:#fff;break-inside:avoid;page-break-inside:avoid}
+.print-card h3{margin:0 0 4px;font-size:1rem}
+.print-card img{width:100%;height:auto;border:1px solid #d1d5db;border-radius:8px;margin-bottom:6px}
+.print-break{break-before:page;page-break-before:always}
+.test-out{font-family:Consolas,monospace;font-size:.88rem;white-space:pre-wrap;background:#f7f8f5;border:1px solid #e5e7eb;border-radius:8px;padding:8px}
+.mt8{margin-top:8px}
+.mt10{margin-top:10px}
+@media (max-width:760px){.row{grid-template-columns:1fr}.actions .btn-inline{width:100%}.print-grid{grid-template-columns:1fr}}
+@media print{
+  @page{size:letter landscape;margin:.4in}
+  body{background:#fff}
+  .no-print{display:none !important}
+  #printCardsSection{display:block !important}
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="card no-print">
+    <h1>Roll Model Golf</h1>
+    <p class="tag">One Flip. One Roll. One Choice.</p>
+    <p>Flip once and roll once to select the golf profile you must use for the entire round.</p>
+    <p>Every distance on your selected card is a target you must attempt with the listed club.</p>
+    <p class="muted">The card distance is not a personal club recommendation and not an expected full-swing distance.</p>
+    <div class="actions">
+      <button id="randomizeBtn" type="button" class="btn-inline" aria-label="Randomize my golf round">Randomize My Round</button>
+      <button id="resumeBtn" type="button" class="btn-inline btn-secondary hidden">Resume Round</button>
+      <button id="resetBtn" type="button" class="btn-inline btn-danger hidden">Reset Round</button>
+      <button id="printBtn" type="button" class="btn-inline btn-secondary">Print Cards</button>
+    </div>
+    <p id="liveStatus" class="status" aria-live="polite"></p>
+  </section>
+
+  <section id="pendingSection" class="card no-print hidden">
+    <h2>Confirm Random Result</h2>
+    <p class="tag">One Flip. One Roll. One Choice.</p>
+    <div id="pendingMeta"></div>
+    <div class="actions">
+      <button id="confirmBtn" type="button" class="btn-inline">Confirm And Lock Profile</button>
+    </div>
+  </section>
+
+  <section id="activeSection" class="card no-print hidden">
+    <h2>Active Round</h2>
+    <p class="tag">Roll Model Golf</p>
+    <div id="activeMeta"></div>
+    <img id="activeCard" class="result-image" alt="Roll Model Golf result card"/>
+    <div class="table-wrap mt10">
+      <table aria-label="Club target distances">
+        <thead><tr><th>Club</th><th>Target distance</th></tr></thead>
+        <tbody id="clubRows"></tbody>
+      </table>
+    </div>
+    <p class="locked">Locked for all 18 holes.</p>
+    <p class="muted">Play the available tee closest to <span id="teeYardage"></span> yards.</p>
+  </section>
+
+  <section id="shotSection" class="card no-print hidden">
+    <h2>Shot Club Finder</h2>
+    <p class="muted">If the card lists Driver at 150 yards and the shot requires 150 yards, use Driver and attempt to hit it 150 yards.</p>
+    <div class="row">
+      <div>
+        <label for="distanceInput">Distance to target (yards)</label>
+        <input id="distanceInput" type="number" min="1" max="1000" step="1"/>
+      </div>
+      <div>
+        <label for="isTeeShot">Shot context</label>
+        <select id="isTeeShot" aria-label="Shot context">
+          <option value="tee">Tee shot</option>
+          <option value="approach">Not a tee shot</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions mt8"><button id="assignBtn" type="button" class="btn-inline">Assign Club</button></div>
+    <div id="shotOut" class="mt8"></div>
+    <div id="driverChoice" class="hidden mt8">
+      <p class="warn" id="driverMessage"></p>
+      <div class="actions">
+        <button id="driverDeckBtn" type="button" class="btn-inline btn-secondary">Driver Off The Deck</button>
+        <button id="driverSubBtn" type="button" class="btn-inline btn-secondary">Use Substitute Club</button>
+      </div>
+      <p id="driverOut" class="status"></p>
+    </div>
+    <p class="muted">Putter is always allowed from the putting surface.</p>
+  </section>
+
+  <section id="bagSection" class="card no-print hidden">
+    <h2>Bag Setup</h2>
+    <p class="muted">Driver substitute search only considers fairway woods, hybrid, and irons marked available.</p>
+    <div id="bagGrid" class="bag-grid"></div>
+  </section>
+
+  <section id="rulesSection" class="card no-print hidden">
+    <h2>Rules</h2>
+    <ol class="rules">
+      <li>Flip the coin once.</li>
+      <li>Roll the die once.</li>
+      <li>Select the matching profile.</li>
+      <li>The profile is locked for the entire round.</li>
+      <li>Play the available tee closest to the printed tee yardage.</li>
+      <li>Use the club whose printed target is closest to the required distance.</li>
+      <li>Attempt to hit the required distance with that assigned club.</li>
+      <li>When two clubs are equally close, use the shorter-hitting club.</li>
+      <li>If Driver is assigned off the tee, choose Driver off the deck or next-closest available fairway wood, hybrid, or iron.</li>
+      <li>The required distance does not change under the Driver exception.</li>
+      <li>Putter is always allowed from the putting surface.</li>
+      <li>No rerolls unless the round is reset.</li>
+    </ol>
+  </section>
+
+  <section id="testsSection" class="card no-print">
+    <h2>Verification</h2>
+    <div class="actions"><button id="runTestsBtn" type="button" class="btn-inline btn-secondary">Run Verification Tests</button></div>
+    <div id="testsOut" class="test-out">Tests not run yet.</div>
+  </section>
+
+  <section id="printCardsSection" class="card hidden">
+    <h2>Roll Model Golf Printable Cards</h2>
+    <p class="tag">One Flip. One Roll. One Choice.</p>
+    <div id="printGrid" class="print-grid"></div>
+  </section>
+</main>
+
+<script>
+const NEW_ROUND_KEY='roll_model_golf_active_round_v1';
+const LEGACY_ROUND_KEYS=['you_get_what_you_get_active_round_v1','rule12_challenge_round_v1'];
+const NEW_BAG_KEY='roll_model_golf_bag_v1';
+const LEGACY_BAG_KEYS=['rule12_challenge_bag_v1'];
+const CLUB_ORDER=['Driver','3-Wood','5-Wood','Hybrid','5-Iron','6-Iron','7-Iron','8-Iron','9-Iron','PW','GW','SW'];
+const BAG_ORDER=[...CLUB_ORDER,'Putter'];
+const AGE_BY_DIE={1:'Age 10',2:'Ages 18–29',3:'Ages 30–44',4:'Ages 45–59',5:'Ages 60–74',6:'Ages 75+'};
+const state={profiles:[],pending:null,active:null,bag:{}};
+
+const els={
+  randomizeBtn:document.getElementById('randomizeBtn'),resumeBtn:document.getElementById('resumeBtn'),resetBtn:document.getElementById('resetBtn'),printBtn:document.getElementById('printBtn'),
+  liveStatus:document.getElementById('liveStatus'),pendingSection:document.getElementById('pendingSection'),pendingMeta:document.getElementById('pendingMeta'),confirmBtn:document.getElementById('confirmBtn'),
+  activeSection:document.getElementById('activeSection'),activeMeta:document.getElementById('activeMeta'),activeCard:document.getElementById('activeCard'),clubRows:document.getElementById('clubRows'),teeYardage:document.getElementById('teeYardage'),
+  shotSection:document.getElementById('shotSection'),distanceInput:document.getElementById('distanceInput'),isTeeShot:document.getElementById('isTeeShot'),assignBtn:document.getElementById('assignBtn'),shotOut:document.getElementById('shotOut'),
+  driverChoice:document.getElementById('driverChoice'),driverMessage:document.getElementById('driverMessage'),driverDeckBtn:document.getElementById('driverDeckBtn'),driverSubBtn:document.getElementById('driverSubBtn'),driverOut:document.getElementById('driverOut'),
+  bagSection:document.getElementById('bagSection'),bagGrid:document.getElementById('bagGrid'),rulesSection:document.getElementById('rulesSection'),
+  printCardsSection:document.getElementById('printCardsSection'),printGrid:document.getElementById('printGrid'),
+  runTestsBtn:document.getElementById('runTestsBtn'),testsOut:document.getElementById('testsOut')
+};
+
+function secureIndex(max){
+  if(window.crypto&&window.crypto.getRandomValues){
+    const array=new Uint32Array(1);
+    const limit=Math.floor(0x100000000/max)*max;
+    let value;
+    do{window.crypto.getRandomValues(array);value=array[0];}while(value>=limit);
+    return value%max;
+  }
+  return Math.floor(Math.random()*max);
+}
+
+function defaultBag(){
+  const bag={};
+  BAG_ORDER.forEach((club)=>{bag[club]=true;});
+  return bag;
+}
+
+function migrateStorage(){
+  let migratedRound=null;
+  LEGACY_ROUND_KEYS.forEach((key)=>{
+    if(migratedRound) return;
+    const raw=localStorage.getItem(key);
+    if(!raw) return;
+    try{
+      const parsed=JSON.parse(raw);
+      if(parsed&&parsed.profile){
+        migratedRound={profileId:parsed.profile.id||parsed.profileId,coinResult:parsed.profile.coinResult||parsed.coinResult,dieRoll:parsed.profile.dieRoll||parsed.dieRoll,locked:true,startedAt:parsed.startedAt||new Date().toISOString()};
+      }
+    }catch(_e){}
+  });
+  if(migratedRound&&!localStorage.getItem(NEW_ROUND_KEY)){
+    localStorage.setItem(NEW_ROUND_KEY,JSON.stringify(migratedRound));
+    LEGACY_ROUND_KEYS.forEach((key)=>localStorage.removeItem(key));
+  }
+
+  let migratedBag=null;
+  LEGACY_BAG_KEYS.forEach((key)=>{
+    if(migratedBag) return;
+    const raw=localStorage.getItem(key);
+    if(!raw) return;
+    try{migratedBag=JSON.parse(raw);}catch(_e){}
+  });
+  if(migratedBag&&!localStorage.getItem(NEW_BAG_KEY)){
+    localStorage.setItem(NEW_BAG_KEY,JSON.stringify(migratedBag));
+    LEGACY_BAG_KEYS.forEach((key)=>localStorage.removeItem(key));
+  }
+}
+
+async function loadProfiles(){
+  const res=await fetch('results.json');
+  if(!res.ok) throw new Error('Could not load results manifest.');
+  const data=await res.json();
+  if(!Array.isArray(data.profiles)||data.profiles.length!==12) throw new Error('Expected 12 profiles in results.json.');
+  state.profiles=data.profiles;
+}
+
+function saveRound(){
+  if(state.active) localStorage.setItem(NEW_ROUND_KEY,JSON.stringify(state.active));
+  else localStorage.removeItem(NEW_ROUND_KEY);
+}
+
+function saveBag(){localStorage.setItem(NEW_BAG_KEY,JSON.stringify(state.bag));}
+
+function findProfile(coinResult,dieRoll){
+  return state.profiles.find((p)=>p.coinResult===coinResult&&p.dieRoll===dieRoll)||null;
+}
+
+function profileFromActive(){
+  if(!state.active) return null;
+  return state.profiles.find((p)=>p.id===state.active.profileId)||null;
+}
+
+function findAssignedClub(shotDistance,clubTargets){
+  if(!Number.isFinite(shotDistance)||shotDistance<=0||shotDistance>1000) throw new Error('Enter a valid distance between 1 and 1000 yards.');
+  let best=null;
+  for(const club of CLUB_ORDER){
+    const targetDistance=clubTargets[club];
+    const difference=Math.abs(shotDistance-targetDistance);
+    if(!best||difference<best.difference||(difference===best.difference&&targetDistance<best.targetDistance)){
+      best={club,targetDistance,difference};
+    }
+  }
+  return best;
+}
+
+function findSubstitute(profile,shotDistance){
+  const allowed=['3-Wood','5-Wood','Hybrid','5-Iron','6-Iron','7-Iron','8-Iron','9-Iron'];
+  const available=allowed.filter((club)=>state.bag[club]);
+  if(!available.length) return null;
+  let best=null;
+  for(const club of available){
+    const targetDistance=profile.clubs[club];
+    const difference=Math.abs(shotDistance-targetDistance);
+    if(!best||difference<best.difference||(difference===best.difference&&targetDistance<best.targetDistance)){
+      best={club,targetDistance,difference};
+    }
+  }
+  return best;
+}
+
+function renderBag(){
+  els.bagGrid.innerHTML='';
+  BAG_ORDER.forEach((club)=>{
+    const id=`bag_${club.replace(/[^a-zA-Z0-9]/g,'')}`;
+    const row=document.createElement('label');
+    row.className='bag-item';
+    row.setAttribute('for',id);
+    row.innerHTML=`<input id="${id}" type="checkbox" ${state.bag[club]?'checked':''} aria-label="${club} available in bag"><span>${club}</span>`;
+    const checkbox=row.querySelector('input');
+    checkbox.addEventListener('change',()=>{state.bag[club]=checkbox.checked;saveBag();});
+    els.bagGrid.appendChild(row);
+  });
+}
+
+function renderPrintCards(){
+  els.printGrid.innerHTML='';
+  const female=state.profiles.filter((p)=>p.gender==='Female');
+  const male=state.profiles.filter((p)=>p.gender==='Male');
+  const grouped=[...female,...male];
+  grouped.forEach((profile,idx)=>{
+    const art=document.createElement('article');
+    art.className=`print-card${idx===6?' print-break':''}`;
+    const rows=CLUB_ORDER.map((club)=>`<tr><td>${club}</td><td>${profile.clubs[club]} yd</td></tr>`).join('');
+    art.innerHTML=`
+      <h3>Roll Model Golf</h3>
+      <p class="tag" style="margin:0">One Flip. One Roll. One Choice.</p>
+      <p style="margin:2px 0"><strong>${profile.coinResult}</strong> • Die ${profile.dieRoll} • ${profile.gender} • ${profile.ageGroup}</p>
+      <p style="margin:2px 0">Play tee closest to ${profile.teeYardage} yards. <strong>Locked for all 18 holes.</strong></p>
+      <img src="${profile.svg}" alt="Roll Model Golf card for ${profile.gender} ${profile.ageGroup}" onerror="this.src='${profile.image}'">
+      <table><thead><tr><th>Club</th><th>Target</th></tr></thead><tbody>${rows}</tbody></table>
+      <p style="margin:4px 0">Driver exception: Driver off the deck or nearest available fairway wood/hybrid/iron.</p>
+    `;
+    els.printGrid.appendChild(art);
+  });
+}
+
+function renderState(){
+  const profile=profileFromActive();
+  const hasActive=Boolean(profile&&state.active&&state.active.locked);
+  els.randomizeBtn.textContent='Randomize My Round';
+  els.randomizeBtn.disabled=false;
+  els.randomizeBtn.classList.toggle('hidden',hasActive);
+  els.resumeBtn.classList.toggle('hidden',!hasActive);
+  els.resetBtn.classList.toggle('hidden',!hasActive);
+  els.activeSection.classList.toggle('hidden',!hasActive);
+  els.shotSection.classList.toggle('hidden',!hasActive);
+  els.bagSection.classList.toggle('hidden',!hasActive);
+  els.rulesSection.classList.toggle('hidden',!hasActive);
+
+  if(!hasActive){
+    els.activeMeta.innerHTML='';
+    els.clubRows.innerHTML='';
+    return;
+  }
+
+  els.activeMeta.innerHTML=`
+    <span class="badge">Roll Model Golf</span>
+    <span class="badge">One Flip. One Roll. One Choice.</span>
+    <span class="badge">Coin: ${profile.coinResult}</span>
+    <span class="badge">Die: ${profile.dieRoll}</span>
+    <span class="badge">${profile.gender}</span>
+    <span class="badge">${profile.ageGroup}</span>
+  `;
+  els.teeYardage.textContent=String(profile.teeYardage);
+  els.activeCard.src=profile.svg;
+  els.activeCard.alt=`Roll Model Golf result card for ${profile.gender} ${profile.ageGroup}, die roll ${profile.dieRoll}, tee target ${profile.teeYardage} yards`;
+  els.activeCard.onerror=()=>{els.activeCard.src=profile.image;};
+  els.clubRows.innerHTML=CLUB_ORDER.map((club)=>`<tr><td>${club}</td><td>${profile.clubs[club]} yd</td></tr>`).join('');
+}
+
+function setPending(profile){
+  state.pending=profile;
+  if(!profile){
+    els.pendingSection.classList.add('hidden');
+    els.pendingMeta.innerHTML='';
+    return;
+  }
+  els.pendingSection.classList.remove('hidden');
+  els.pendingMeta.innerHTML=`
+    <span class="badge">Roll Model Golf</span>
+    <span class="badge">One Flip. One Roll. One Choice.</span>
+    <span class="badge">Coin: ${profile.coinResult}</span>
+    <span class="badge">Die: ${profile.dieRoll}</span>
+    <span class="badge">${profile.gender}</span>
+    <span class="badge">${profile.ageGroup}</span>
+    <span class="badge">Tee target: ${profile.teeYardage} yd</span>
+    <p>Flip once and roll once to select the golf profile you must use for the entire round.</p>
+  `;
+}
+
+function loadPersistedState(){
+  const roundRaw=localStorage.getItem(NEW_ROUND_KEY);
+  if(roundRaw){
+    try{state.active=JSON.parse(roundRaw);}catch(_e){state.active=null;}
+  }
+  const bagRaw=localStorage.getItem(NEW_BAG_KEY);
+  if(bagRaw){
+    try{state.bag={...defaultBag(),...JSON.parse(bagRaw)};}catch(_e){state.bag=defaultBag();}
+  } else {
+    state.bag=defaultBag();
+  }
+}
+
+async function verifyAssetLoads(){
+  const checks=[];
+  for(const profile of state.profiles){
+    checks.push(await new Promise((resolve)=>{
+      const img=new Image();
+      img.onload=()=>resolve(true);
+      img.onerror=()=>resolve(false);
+      img.src=profile.svg;
+    }));
+    checks.push(await new Promise((resolve)=>{
+      const img=new Image();
+      img.onload=()=>resolve(true);
+      img.onerror=()=>resolve(false);
+      img.src=profile.image;
+    }));
+  }
+  return checks.every(Boolean);
+}
+
+function runVerificationTests(){
+  const out=[];
+  const assert=(name,cond)=>out.push(`${cond?'PASS':'FAIL'} - ${name}`);
+  const prevActive=state.active?{...state.active}:null;
+  const prevShotOut=els.shotOut.innerHTML;
+  const prevDriverHidden=els.driverChoice.classList.contains('hidden');
+  const prevDistance=els.distanceInput.value;
+  const prevContext=els.isTeeShot.value;
+  const profile=state.profiles[0];
+  assert('Main heading displays Roll Model Golf',document.querySelector('h1')?.textContent==='Roll Model Golf');
+  assert('Tagline displays One Flip. One Roll. One Choice.',document.querySelector('.tag')?.textContent==='One Flip. One Roll. One Choice.');
+  assert('Heads maps to Female',findProfile('Heads',1)?.gender==='Female');
+  assert('Tails maps to Male',findProfile('Tails',1)?.gender==='Male');
+  assert('Die 1 maps to Age 10',AGE_BY_DIE[1]==='Age 10');
+  assert('Die 2 maps to Ages 18–29',AGE_BY_DIE[2]==='Ages 18–29');
+  assert('Die 3 maps to Ages 30–44',AGE_BY_DIE[3]==='Ages 30–44');
+  assert('Die 4 maps to Ages 45–59',AGE_BY_DIE[4]==='Ages 45–59');
+  assert('Die 5 maps to Ages 60–74',AGE_BY_DIE[5]==='Ages 60–74');
+  assert('Die 6 maps to Ages 75+',AGE_BY_DIE[6]==='Ages 75+');
+  const uniqueCombos=new Set(state.profiles.map((p)=>`${p.coinResult}-${p.dieRoll}`));
+  assert('All 12 combinations return exactly one profile',uniqueCombos.size===12&&state.profiles.length===12);
+  const seenCoin={Heads:0,Tails:0};
+  const seenDie={1:0,2:0,3:0,4:0,5:0,6:0};
+  const seenCombo=new Set();
+  for(let i=0;i<200;i++){
+    const c=secureIndex(2)===0?'Heads':'Tails';
+    const d=secureIndex(6)+1;
+    seenCoin[c]++;
+    seenDie[d]++;
+    seenCombo.add(`${c}-${d}`);
+  }
+  assert('Randomization produces independent coin and die results',seenCoin.Heads>0&&seenCoin.Tails>0&&Object.values(seenDie).every((n)=>n>0)&&seenCombo.size>6);
+  const tie=findAssignedClub(145,{Driver:150,'3-Wood':140,'5-Wood':130,Hybrid:120,'5-Iron':110,'6-Iron':100,'7-Iron':90,'8-Iron':80,'9-Iron':70,PW:60,GW:50,SW:40});
+  assert('Tie chooses shorter-hitting club',tie.club==='3-Wood');
+  const nearest=findAssignedClub(151,profile.clubs);
+  assert('Nearest club selection works',nearest.club==='Driver');
+  const sub=findSubstitute(profile,150);
+  assert('Driver substitution excludes wedges and putter',!['Driver','PW','GW','SW','Putter'].includes(sub?.club||''));
+  assert('Driver substitution keeps required distance',findSubstitute(profile,150)!==null);
+  state.active={profileId:profile.id,coinResult:profile.coinResult,dieRoll:profile.dieRoll,locked:true,startedAt:new Date().toISOString()};
+  renderState();
+  els.distanceInput.value='90';
+  els.isTeeShot.value='approach';
+  assignShot();
+  assert('Driver approach shots show both approved choices',!els.driverChoice.classList.contains('hidden'));
+  assert('Invalid shot distances rejected',(()=>{try{findAssignedClub(-2,profile.clubs);return false;}catch(_e){return true;}})());
+  assert('Result lock survives refresh state read',Boolean(localStorage.getItem(NEW_ROUND_KEY)||!state.active));
+  assert('Reset requires confirmation',resetRound.toString().includes('window.confirm'));
+  assert('Printable cards use new branding',els.printGrid.textContent.includes('Roll Model Golf')&&els.printGrid.textContent.includes('One Flip. One Roll. One Choice.'));
+  const pageText=document.body.innerText;
+  assert('No previous product name remains in visible text',!pageText.includes('You Get What You Get'));
+  state.active=prevActive;
+  renderState();
+  els.shotOut.innerHTML=prevShotOut;
+  els.distanceInput.value=prevDistance;
+  els.isTeeShot.value=prevContext;
+  if(prevDriverHidden) els.driverChoice.classList.add('hidden');
+  els.testsOut.textContent=out.join('\n');
+}
+
+function randomizeRound(){
+  els.randomizeBtn.disabled=true;
+  els.liveStatus.textContent='Flipping coin and rolling die...';
+  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const applyResult=()=>{
+    const coinResult=secureIndex(2)===0?'Heads':'Tails';
+    const dieRoll=secureIndex(6)+1;
+    const profile=findProfile(coinResult,dieRoll);
+    if(!profile){
+      els.liveStatus.textContent='Could not match a profile. Please try again.';
+      els.randomizeBtn.disabled=false;
+      return;
+    }
+    setPending(profile);
+    els.liveStatus.textContent=`Pending result: ${coinResult}, die ${dieRoll}. Confirm to lock for all 18 holes.`;
+    els.randomizeBtn.disabled=false;
+  };
+  if(reduced){applyResult();return;}
+  setTimeout(applyResult,280);
+}
+
+function confirmPending(){
+  if(!state.pending||state.active?.locked) return;
+  state.active={
+    profileId:state.pending.id,
+    coinResult:state.pending.coinResult,
+    dieRoll:state.pending.dieRoll,
+    locked:true,
+    startedAt:new Date().toISOString()
+  };
+  saveRound();
+  setPending(null);
+  renderState();
+  els.liveStatus.textContent='Locked for all 18 holes.';
+}
+
+function assignShot(){
+  const profile=profileFromActive();
+  if(!profile){
+    els.shotOut.innerHTML='<p class="warn">No active round. Randomize and confirm first.</p>';
+    return;
+  }
+  const value=Number(els.distanceInput.value);
+  try{
+    const assigned=findAssignedClub(value,profile.clubs);
+    els.shotOut.innerHTML=`
+      <span class="badge">Assigned club: ${assigned.club}</span>
+      <span class="badge">Card target: ${assigned.targetDistance} yd</span>
+      <span class="badge">Difference: ${assigned.difference.toFixed(1)} yd</span>
+      <p>Hit ${assigned.club} and attempt to carry it ${value} yards.</p>
+    `;
+    const isApproach=els.isTeeShot.value==='approach';
+    if(assigned.club==='Driver'&&isApproach){
+      els.driverChoice.classList.remove('hidden');
+      els.driverMessage.textContent=`Driver is assigned. Choose Driver off the deck or the next-closest available fairway wood, hybrid, or iron. The required distance remains ${value} yards.`;
+      els.driverOut.textContent='';
+      els.driverDeckBtn.onclick=()=>{els.driverOut.textContent=`Use Driver off the deck and attempt ${value} yards.`;};
+      els.driverSubBtn.onclick=()=>{
+        const sub=findSubstitute(profile,value);
+        if(!sub){els.driverOut.textContent='No eligible substitute is marked available. Driver off the deck remains valid.';return;}
+        els.driverOut.textContent=`Use ${sub.club} as substitute. Required distance stays ${value} yards.`;
+      };
+    } else {
+      els.driverChoice.classList.add('hidden');
+      els.driverOut.textContent='';
+    }
+  } catch(err){
+    els.shotOut.innerHTML=`<p class="warn">${err.message}</p>`;
+    els.driverChoice.classList.add('hidden');
+  }
+}
+
+function resetRound(){
+  if(!state.active){
+    els.liveStatus.textContent='No active round to reset.';
+    return;
+  }
+  const ok=window.confirm('Discard the active Roll Model Golf round and unlock randomization?');
+  if(!ok) return;
+  state.active=null;
+  saveRound();
+  renderState();
+  els.shotOut.innerHTML='';
+  els.driverChoice.classList.add('hidden');
+  els.liveStatus.textContent='Round reset. Randomize My Round is available again.';
+}
+
+function resumeRound(){
+  renderState();
+  els.activeSection.scrollIntoView({behavior:(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)?'auto':'smooth'});
+  els.liveStatus.textContent='Resumed locked round.';
+}
+
+async function init(){
+  migrateStorage();
+  try{
+    await loadProfiles();
+  } catch(err){
+    els.liveStatus.textContent='Failed to load profile data. Check results.json path and try again.';
+    return;
+  }
+
+  loadPersistedState();
+  renderBag();
+  renderPrintCards();
+  renderState();
+
+  els.randomizeBtn.addEventListener('click',randomizeRound);
+  els.confirmBtn.addEventListener('click',confirmPending);
+  els.resetBtn.addEventListener('click',resetRound);
+  els.resumeBtn.addEventListener('click',resumeRound);
+  els.assignBtn.addEventListener('click',assignShot);
+  els.printBtn.addEventListener('click',()=>window.print());
+  els.runTestsBtn.addEventListener('click',runVerificationTests);
+
+  const assetsOk=await verifyAssetLoads();
+  els.liveStatus.textContent=assetsOk ? (state.active ? 'Resume Round is available.' : 'Randomize My Round is available.') : 'Some card assets failed to load.';
+}
+
+init();
+</script>
+</body>
+</html>

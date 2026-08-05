@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Strokes Gained Tracker</title>
+  <style>
+    :root{--bg:#0f1115;--card:#171a21;--text:#eaeef5;--muted:#9aa3b2}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{max-width:980px;margin:0 auto;padding:16px}
+    .card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+    h1{margin:0 0 8px;font-size:1.3rem}
+    label{font-size:.95rem;color:var(--muted);display:block;margin-bottom:6px}
+    input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a2f3a;background:#0e1117;color:var(--text);box-sizing:border-box}
+    .row{display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:8px}
+    .quickbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .quickbar button{width:auto;cursor:pointer}
+    .info{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:.95rem;margin-top:8px}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#10131a;border:1px solid #2a2f3a;font-size:.85rem}
+    .minihelp{color:var(--muted);font-size:.9rem;margin-top:8px}
+    @media (max-width:760px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Strokes Gained Tracker</h1>
+    <div class="row">
+      <div>
+        <label for="benchmark">Benchmark</label>
+        <select id="benchmark"><option value="pga" selected>PGA Tour Baseline</option><option value="10hcp">10 Handicap Baseline</option><option value="20hcp">20 Handicap Baseline</option></select>
+      </div>
+      <div>
+        <label for="shotType">Shot Type</label>
+        <select id="shotType"><option value="drive">Drive</option><option value="approach" selected>Approach</option><option value="putt">Putt</option></select>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="lieStart">Start Lie</label>
+        <select id="lieStart"><option value="tee">Tee</option><option value="fairway" selected>Fairway</option><option value="rough">Rough</option><option value="sand">Bunker</option><option value="green">Green</option></select>
+      </div>
+      <div>
+        <label for="lieEnd">End Lie</label>
+        <select id="lieEnd"><option value="fairway" selected>Fairway</option><option value="rough">Rough</option><option value="sand">Bunker</option><option value="green">Green</option><option value="holed">Holed</option></select>
+      </div>
+    </div>
+    <div class="row">
+      <div><label for="startDist">Start Distance (yards)</label><input id="startDist" type="number" min="0" step="0.1"></div>
+      <div><label for="endDist">End Distance (yards)</label><input id="endDist" type="number" min="0" step="0.1"></div>
+    </div>
+    <div class="quickbar">
+      <button id="calcBtn" type="button">Calculate Shot SG</button>
+      <button id="saveBtn" type="button">Save Shot</button>
+      <button id="resetBtn" type="button">Reset Hole</button>
+    </div>
+    <div id="status" class="minihelp"></div>
+    <div class="info">
+      <span id="shotOut" class="badge">Shot SG: —</span>
+      <span id="holeOut" class="badge">Hole SG: 0.00</span>
+      <span id="countsOut" class="badge">Drive: 0 | Approach: 0 | Putt: 0</span>
+    </div>
+  </div>
+</div>
+<script>
+const SG_BASELINES={pga:{tee:4.2,fairway:3.05,rough:3.35,sand:3.6,green:1.95},'10hcp':{tee:4.6,fairway:3.45,rough:3.75,sand:3.95,green:2.05},'20hcp':{tee:5.1,fairway:3.95,rough:4.3,sand:4.5,green:2.2}};
+const els={benchmark:document.getElementById('benchmark'),shotType:document.getElementById('shotType'),lieStart:document.getElementById('lieStart'),lieEnd:document.getElementById('lieEnd'),startDist:document.getElementById('startDist'),endDist:document.getElementById('endDist'),calcBtn:document.getElementById('calcBtn'),saveBtn:document.getElementById('saveBtn'),resetBtn:document.getElementById('resetBtn'),status:document.getElementById('status'),shotOut:document.getElementById('shotOut'),holeOut:document.getElementById('holeOut'),countsOut:document.getElementById('countsOut')};
+const counts={drive:0,approach:0,putt:0};
+let currentShot=null;let holeSG=0;
+function baselineForLie(lie,bench){const base=SG_BASELINES[bench]||SG_BASELINES.pga;return base[lie]??base.fairway;}
+function expectedStrokes(dist,lie,bench){if(lie==='holed'||dist<=0) return 0;const b=baselineForLie(lie,bench);if(lie==='green') return Math.max(1,1+0.015*dist);return Math.max(1,b+0.0045*dist);}
+function updateCounts(){els.countsOut.textContent=`Drive: ${counts.drive} | Approach: ${counts.approach} | Putt: ${counts.putt}`;}
+function calc(){
+  const s=parseFloat(els.startDist.value); const isHoled=els.lieEnd.value==='holed'; const e=isHoled?0:parseFloat(els.endDist.value);
+  if(!isFinite(s)||s<0){els.status.textContent='Enter valid start distance.';return false;}
+  if(!isHoled&&(!isFinite(e)||e<0)){els.status.textContent='Enter valid end distance.';return false;}
+  const eStart=expectedStrokes(s,els.lieStart.value,els.benchmark.value);
+  const eEnd=isHoled?0:expectedStrokes(e,els.lieEnd.value,els.benchmark.value);
+  currentShot=eStart-eEnd-1;
+  els.shotOut.textContent=`Shot SG: ${currentShot>=0?'+':''}${currentShot.toFixed(2)}`;
+  els.status.textContent=`E(start): ${eStart.toFixed(2)} | E(end): ${eEnd.toFixed(2)}`;
+  return true;
+}
+function save(){
+  if(currentShot===null&&!calc()) return;
+  const typ=els.shotType.value; counts[typ]=(counts[typ]||0)+1; updateCounts();
+  holeSG+=currentShot; currentShot=null;
+  els.holeOut.textContent=`Hole SG: ${holeSG>=0?'+':''}${holeSG.toFixed(2)}`;
+  els.shotOut.textContent='Shot SG: —';
+  els.startDist.value=els.endDist.value||els.startDist.value;
+}
+els.calcBtn.addEventListener('click',calc); els.saveBtn.addEventListener('click',save);
+els.resetBtn.addEventListener('click',()=>{holeSG=0;currentShot=null;counts.drive=0;counts.approach=0;counts.putt=0;updateCounts();els.holeOut.textContent='Hole SG: 0.00';els.shotOut.textContent='Shot SG: —';els.status.textContent='Hole reset.';});
+updateCounts();
+</script>
+</body>
+</html>
