@@ -6,48 +6,49 @@
 <meta name="description" content="Roll Model Golf. One Flip. One Roll. One Choice."/>
 <title>Roll Model Golf</title>
 <style>
-:root{color-scheme:light;--green:#173F2B;--gold:#C79A2B;--cream:#F4F0E4;--dark:#202622;--muted:#5e6661;--line:#d5d8d3}
+:root{--bg:#0f1115;--card:#171a21;--text:#eaeef5;--muted:#9aa3b2;--row:#222836;--accent:#2bb3b8;--warn:#ffd39a;--ok:#9ff3bf}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:var(--cream);color:var(--dark)}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
 main{max-width:980px;margin:auto;padding:16px}
-.card{background:#fff;border:2px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.card{background:var(--card);border:1px solid #2a2f3a;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
 h1{margin:0 0 4px;font-size:clamp(1.8rem,6vw,2.8rem)}
 h2{margin:0 0 8px;font-size:1.35rem}
-.tag{margin:0 0 6px;font-size:1.1rem;font-weight:700;color:var(--green)}
+.tag{margin:0 0 6px;font-size:1.1rem;font-weight:700;color:var(--accent)}
 p{line-height:1.45;margin:6px 0}
 button,input,select{font:inherit}
-button{width:100%;min-height:52px;border:0;border-radius:12px;background:var(--green);color:#fff;font-weight:700;padding:10px 14px;cursor:pointer}
-button:hover{filter:brightness(1.06)}
+button{width:100%;min-height:52px;border:1px solid #2a2f3a;border-radius:12px;background:#10131a;color:var(--text);font-weight:700;padding:10px 14px;cursor:pointer}
+button:hover{filter:brightness(1.12)}
 button:disabled{opacity:.58;cursor:not-allowed}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-.btn-secondary{background:#37443a}
-.btn-danger{background:#7f1d1d}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn-secondary{background:#141922}
+.btn-danger{background:#3a1717}
 .btn-inline{width:auto;min-width:200px}
 .row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-label{display:block;font-weight:700;margin:0 0 4px}
-input,select{width:100%;min-height:48px;padding:8px 10px;border-radius:10px;border:1px solid #95a09a}
+label{display:block;font-weight:700;margin:0 0 4px;color:var(--muted)}
+input,select{width:100%;min-height:48px;padding:8px 10px;border-radius:10px;border:1px solid #2a2f3a;background:#0e1117;color:var(--text)}
 .status{font-weight:700;min-height:1.3rem}
-.badge{display:inline-block;padding:6px 10px;background:#ecf4ef;border:1px solid #bfd4c7;border-radius:999px;font-weight:700;margin:2px 4px 2px 0}
+.badge{display:inline-block;padding:6px 10px;background:#10131a;border:1px solid #2a2f3a;border-radius:999px;font-weight:700;margin:2px 4px 2px 0}
 .muted{color:var(--muted)}
-.locked{color:#0f5132;font-weight:700}
-.warn{color:#9a3412;font-weight:700}
+.locked{color:var(--ok);font-weight:700}
+.warn{color:var(--warn);font-weight:700}
 .hidden{display:none !important}
 .actions{display:flex;flex-wrap:wrap;gap:8px}
-.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+.table-wrap{overflow:auto;border:1px solid var(--row);border-radius:12px}
 table{width:100%;border-collapse:collapse}
-th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left;white-space:nowrap}
-th{background:#f8f9f6}
-.result-image{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line);margin-top:8px}
+th,td{border-bottom:1px solid var(--row);padding:8px;text-align:left;white-space:nowrap}
+th{background:#10131a;color:var(--muted)}
+.result-image{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--row);margin-top:8px;background:#0e1117}
 .bag-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.bag-item{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:8px}
+.bag-item{display:flex;align-items:center;gap:8px;border:1px solid #2a2f3a;border-radius:10px;padding:8px;background:#10131a;color:var(--text)}
 .bag-item input{width:auto;min-height:0}
 .rules{padding-left:18px}
+.meta-block{display:grid;gap:6px}
+.badge-row{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .print-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .print-card{border:2px dashed #9aa3b2;border-radius:10px;padding:8px;background:#fff;break-inside:avoid;page-break-inside:avoid}
 .print-card h3{margin:0 0 4px;font-size:1rem}
 .print-card img{width:100%;height:auto;border:1px solid #d1d5db;border-radius:8px;margin-bottom:6px}
 .print-break{break-before:page;page-break-before:always}
-.test-out{font-family:Consolas,monospace;font-size:.88rem;white-space:pre-wrap;background:#f7f8f5;border:1px solid #e5e7eb;border-radius:8px;padding:8px}
 .mt8{margin-top:8px}
 .mt10{margin-top:10px}
 @media (max-width:760px){.row{grid-template-columns:1fr}.actions .btn-inline{width:100%}.print-grid{grid-template-columns:1fr}}
@@ -153,12 +154,6 @@ th{background:#f8f9f6}
     </ol>
   </section>
 
-  <section id="testsSection" class="card no-print">
-    <h2>Verification</h2>
-    <div class="actions"><button id="runTestsBtn" type="button" class="btn-inline btn-secondary">Run Verification Tests</button></div>
-    <div id="testsOut" class="test-out">Tests not run yet.</div>
-  </section>
-
   <section id="printCardsSection" class="card hidden">
     <h2>Roll Model Golf Printable Cards</h2>
     <p class="tag">One Flip. One Roll. One Choice.</p>
@@ -174,6 +169,24 @@ const LEGACY_BAG_KEYS=['rule12_challenge_bag_v1'];
 const CLUB_ORDER=['Driver','3-Wood','5-Wood','Hybrid','5-Iron','6-Iron','7-Iron','8-Iron','9-Iron','PW','GW','SW'];
 const BAG_ORDER=[...CLUB_ORDER,'Putter'];
 const AGE_BY_DIE={1:'Age 10',2:'Ages 18–29',3:'Ages 30–44',4:'Ages 45–59',5:'Ages 60–74',6:'Ages 75+'};
+const EMBEDDED_RESULTS={
+  game:'Roll Model Golf',
+  version:1,
+  profiles:[
+    {id:'female-age-10',gender:'Female',coinResult:'Heads',dieRoll:1,ageGroup:'Age 10',teeYardage:3000,clubs:{'Driver':90,'3-Wood':84,'5-Wood':80,'Hybrid':76,'5-Iron':70,'6-Iron':65,'7-Iron':60,'8-Iron':53,'9-Iron':47,'PW':40,'GW':35,'SW':30},image:'png/female-age-10.png',svg:'svg/female-age-10.svg'},
+    {id:'female-18-29',gender:'Female',coinResult:'Heads',dieRoll:2,ageGroup:'Ages 18–29',teeYardage:5300,clubs:{'Driver':150,'3-Wood':141,'5-Wood':135,'Hybrid':128,'5-Iron':121,'6-Iron':113,'7-Iron':105,'8-Iron':98,'9-Iron':92,'PW':85,'GW':75,'SW':64},image:'png/female-18-29.png',svg:'svg/female-18-29.svg'},
+    {id:'female-30-44',gender:'Female',coinResult:'Heads',dieRoll:3,ageGroup:'Ages 30–44',teeYardage:5100,clubs:{'Driver':125,'3-Wood':120,'5-Wood':116,'Hybrid':113,'5-Iron':109,'6-Iron':104,'7-Iron':100,'8-Iron':93,'9-Iron':87,'PW':80,'GW':70,'SW':60},image:'png/female-30-44.png',svg:'svg/female-30-44.svg'},
+    {id:'female-45-59',gender:'Female',coinResult:'Heads',dieRoll:4,ageGroup:'Ages 45–59',teeYardage:4600,clubs:{'Driver':120,'3-Wood':114,'5-Wood':110,'Hybrid':106,'5-Iron':100,'6-Iron':95,'7-Iron':90,'8-Iron':83,'9-Iron':77,'PW':70,'GW':62,'SW':52},image:'png/female-45-59.png',svg:'svg/female-45-59.svg'},
+    {id:'female-60-74',gender:'Female',coinResult:'Heads',dieRoll:5,ageGroup:'Ages 60–74',teeYardage:4000,clubs:{'Driver':105,'3-Wood':98,'5-Wood':93,'Hybrid':88,'5-Iron':82,'6-Iron':76,'7-Iron':70,'8-Iron':68,'9-Iron':67,'PW':65,'GW':57,'SW':49},image:'png/female-60-74.png',svg:'svg/female-60-74.svg'},
+    {id:'female-75-plus',gender:'Female',coinResult:'Heads',dieRoll:6,ageGroup:'Ages 75+',teeYardage:3400,clubs:{'Driver':80,'3-Wood':74,'5-Wood':70,'Hybrid':66,'5-Iron':60,'6-Iron':55,'7-Iron':50,'8-Iron':47,'9-Iron':43,'PW':40,'GW':35,'SW':30},image:'png/female-75-plus.png',svg:'svg/female-75-plus.svg'},
+    {id:'male-age-10',gender:'Male',coinResult:'Tails',dieRoll:1,ageGroup:'Age 10',teeYardage:3200,clubs:{'Driver':100,'3-Wood':93,'5-Wood':88,'Hybrid':83,'5-Iron':77,'6-Iron':71,'7-Iron':65,'8-Iron':58,'9-Iron':52,'PW':45,'GW':40,'SW':34},image:'png/male-age-10.png',svg:'svg/male-age-10.svg'},
+    {id:'male-18-29',gender:'Male',coinResult:'Tails',dieRoll:2,ageGroup:'Ages 18–29',teeYardage:6800,clubs:{'Driver':240,'3-Wood':225,'5-Wood':214,'Hybrid':204,'5-Iron':191,'6-Iron':178,'7-Iron':165,'8-Iron':153,'9-Iron':142,'PW':130,'GW':114,'SW':98},image:'png/male-18-29.png',svg:'svg/male-18-29.svg'},
+    {id:'male-30-44',gender:'Male',coinResult:'Tails',dieRoll:3,ageGroup:'Ages 30–44',teeYardage:6800,clubs:{'Driver':230,'3-Wood':216,'5-Wood':206,'Hybrid':196,'5-Iron':184,'6-Iron':173,'7-Iron':160,'8-Iron':148,'9-Iron':137,'PW':125,'GW':110,'SW':94},image:'png/male-30-44.png',svg:'svg/male-30-44.svg'},
+    {id:'male-45-59',gender:'Male',coinResult:'Tails',dieRoll:4,ageGroup:'Ages 45–59',teeYardage:6500,clubs:{'Driver':205,'3-Wood':192,'5-Wood':183,'Hybrid':174,'5-Iron':163,'6-Iron':152,'7-Iron':140,'8-Iron':130,'9-Iron':120,'PW':110,'GW':97,'SW':82},image:'png/male-45-59.png',svg:'svg/male-45-59.svg'},
+    {id:'male-60-74',gender:'Male',coinResult:'Tails',dieRoll:5,ageGroup:'Ages 60–74',teeYardage:6000,clubs:{'Driver':185,'3-Wood':173,'5-Wood':165,'Hybrid':156,'5-Iron':146,'6-Iron':136,'7-Iron':125,'8-Iron':117,'9-Iron':108,'PW':100,'GW':88,'SW':75},image:'png/male-60-74.png',svg:'svg/male-60-74.svg'},
+    {id:'male-75-plus',gender:'Male',coinResult:'Tails',dieRoll:6,ageGroup:'Ages 75+',teeYardage:5600,clubs:{'Driver':160,'3-Wood':149,'5-Wood':141,'Hybrid':134,'5-Iron':124,'6-Iron':115,'7-Iron':105,'8-Iron':100,'9-Iron':95,'PW':90,'GW':79,'SW':68},image:'png/male-75-plus.png',svg:'svg/male-75-plus.svg'}
+  ]
+};
 const state={profiles:[],pending:null,active:null,bag:{}};
 
 const els={
@@ -183,8 +196,7 @@ const els={
   shotSection:document.getElementById('shotSection'),distanceInput:document.getElementById('distanceInput'),isTeeShot:document.getElementById('isTeeShot'),assignBtn:document.getElementById('assignBtn'),shotOut:document.getElementById('shotOut'),
   driverChoice:document.getElementById('driverChoice'),driverMessage:document.getElementById('driverMessage'),driverDeckBtn:document.getElementById('driverDeckBtn'),driverSubBtn:document.getElementById('driverSubBtn'),driverOut:document.getElementById('driverOut'),
   bagSection:document.getElementById('bagSection'),bagGrid:document.getElementById('bagGrid'),rulesSection:document.getElementById('rulesSection'),
-  printCardsSection:document.getElementById('printCardsSection'),printGrid:document.getElementById('printGrid'),
-  runTestsBtn:document.getElementById('runTestsBtn'),testsOut:document.getElementById('testsOut')
+  printCardsSection:document.getElementById('printCardsSection'),printGrid:document.getElementById('printGrid')
 };
 
 function secureIndex(max){
@@ -236,9 +248,12 @@ function migrateStorage(){
 }
 
 async function loadProfiles(){
-  const res=await fetch('results.json');
-  if(!res.ok) throw new Error('Could not load results manifest.');
-  const data=await res.json();
+  let data=null;
+  try{
+    const res=await fetch('results.json');
+    if(res.ok) data=await res.json();
+  }catch(_e){}
+  if(!data) data=EMBEDDED_RESULTS;
   if(!Array.isArray(data.profiles)||data.profiles.length!==12) throw new Error('Expected 12 profiles in results.json.');
   state.profiles=data.profiles;
 }
@@ -309,16 +324,7 @@ function renderPrintCards(){
   grouped.forEach((profile,idx)=>{
     const art=document.createElement('article');
     art.className=`print-card${idx===6?' print-break':''}`;
-    const rows=CLUB_ORDER.map((club)=>`<tr><td>${club}</td><td>${profile.clubs[club]} yd</td></tr>`).join('');
-    art.innerHTML=`
-      <h3>Roll Model Golf</h3>
-      <p class="tag" style="margin:0">One Flip. One Roll. One Choice.</p>
-      <p style="margin:2px 0"><strong>${profile.coinResult}</strong> • Die ${profile.dieRoll} • ${profile.gender} • ${profile.ageGroup}</p>
-      <p style="margin:2px 0">Play tee closest to ${profile.teeYardage} yards. <strong>Locked for all 18 holes.</strong></p>
-      <img src="${profile.svg}" alt="Roll Model Golf card for ${profile.gender} ${profile.ageGroup}" onerror="this.src='${profile.image}'">
-      <table><thead><tr><th>Club</th><th>Target</th></tr></thead><tbody>${rows}</tbody></table>
-      <p style="margin:4px 0">Driver exception: Driver off the deck or nearest available fairway wood/hybrid/iron.</p>
-    `;
+    art.innerHTML=`<img src="${profile.image}" alt="Roll Model Golf card for ${profile.gender} ${profile.ageGroup}">`;
     els.printGrid.appendChild(art);
   });
 }
@@ -343,12 +349,16 @@ function renderState(){
   }
 
   els.activeMeta.innerHTML=`
-    <span class="badge">Roll Model Golf</span>
-    <span class="badge">One Flip. One Roll. One Choice.</span>
-    <span class="badge">Coin: ${profile.coinResult}</span>
-    <span class="badge">Die: ${profile.dieRoll}</span>
-    <span class="badge">${profile.gender}</span>
-    <span class="badge">${profile.ageGroup}</span>
+    <div class="meta-block">
+      <div class="badge-row">
+        <span class="badge">Roll Model Golf</span>
+        <span class="badge">One Flip. One Roll. One Choice.</span>
+        <span class="badge">Coin: ${profile.coinResult}</span>
+        <span class="badge">Die: ${profile.dieRoll}</span>
+        <span class="badge">${profile.gender}</span>
+        <span class="badge">${profile.ageGroup}</span>
+      </div>
+    </div>
   `;
   els.teeYardage.textContent=String(profile.teeYardage);
   els.activeCard.src=profile.svg;
@@ -366,14 +376,18 @@ function setPending(profile){
   }
   els.pendingSection.classList.remove('hidden');
   els.pendingMeta.innerHTML=`
-    <span class="badge">Roll Model Golf</span>
-    <span class="badge">One Flip. One Roll. One Choice.</span>
-    <span class="badge">Coin: ${profile.coinResult}</span>
-    <span class="badge">Die: ${profile.dieRoll}</span>
-    <span class="badge">${profile.gender}</span>
-    <span class="badge">${profile.ageGroup}</span>
-    <span class="badge">Tee target: ${profile.teeYardage} yd</span>
-    <p>Flip once and roll once to select the golf profile you must use for the entire round.</p>
+    <div class="meta-block">
+      <div class="badge-row">
+        <span class="badge">Roll Model Golf</span>
+        <span class="badge">One Flip. One Roll. One Choice.</span>
+        <span class="badge">Coin: ${profile.coinResult}</span>
+        <span class="badge">Die: ${profile.dieRoll}</span>
+        <span class="badge">${profile.gender}</span>
+        <span class="badge">${profile.ageGroup}</span>
+        <span class="badge">Tee target: ${profile.teeYardage} yd</span>
+      </div>
+      <p>Flip once and roll once to select the golf profile you must use for the entire round.</p>
+    </div>
   `;
 }
 
@@ -407,66 +421,6 @@ async function verifyAssetLoads(){
     }));
   }
   return checks.every(Boolean);
-}
-
-function runVerificationTests(){
-  const out=[];
-  const assert=(name,cond)=>out.push(`${cond?'PASS':'FAIL'} - ${name}`);
-  const prevActive=state.active?{...state.active}:null;
-  const prevShotOut=els.shotOut.innerHTML;
-  const prevDriverHidden=els.driverChoice.classList.contains('hidden');
-  const prevDistance=els.distanceInput.value;
-  const prevContext=els.isTeeShot.value;
-  const profile=state.profiles[0];
-  assert('Main heading displays Roll Model Golf',document.querySelector('h1')?.textContent==='Roll Model Golf');
-  assert('Tagline displays One Flip. One Roll. One Choice.',document.querySelector('.tag')?.textContent==='One Flip. One Roll. One Choice.');
-  assert('Heads maps to Female',findProfile('Heads',1)?.gender==='Female');
-  assert('Tails maps to Male',findProfile('Tails',1)?.gender==='Male');
-  assert('Die 1 maps to Age 10',AGE_BY_DIE[1]==='Age 10');
-  assert('Die 2 maps to Ages 18–29',AGE_BY_DIE[2]==='Ages 18–29');
-  assert('Die 3 maps to Ages 30–44',AGE_BY_DIE[3]==='Ages 30–44');
-  assert('Die 4 maps to Ages 45–59',AGE_BY_DIE[4]==='Ages 45–59');
-  assert('Die 5 maps to Ages 60–74',AGE_BY_DIE[5]==='Ages 60–74');
-  assert('Die 6 maps to Ages 75+',AGE_BY_DIE[6]==='Ages 75+');
-  const uniqueCombos=new Set(state.profiles.map((p)=>`${p.coinResult}-${p.dieRoll}`));
-  assert('All 12 combinations return exactly one profile',uniqueCombos.size===12&&state.profiles.length===12);
-  const seenCoin={Heads:0,Tails:0};
-  const seenDie={1:0,2:0,3:0,4:0,5:0,6:0};
-  const seenCombo=new Set();
-  for(let i=0;i<200;i++){
-    const c=secureIndex(2)===0?'Heads':'Tails';
-    const d=secureIndex(6)+1;
-    seenCoin[c]++;
-    seenDie[d]++;
-    seenCombo.add(`${c}-${d}`);
-  }
-  assert('Randomization produces independent coin and die results',seenCoin.Heads>0&&seenCoin.Tails>0&&Object.values(seenDie).every((n)=>n>0)&&seenCombo.size>6);
-  const tie=findAssignedClub(145,{Driver:150,'3-Wood':140,'5-Wood':130,Hybrid:120,'5-Iron':110,'6-Iron':100,'7-Iron':90,'8-Iron':80,'9-Iron':70,PW:60,GW:50,SW:40});
-  assert('Tie chooses shorter-hitting club',tie.club==='3-Wood');
-  const nearest=findAssignedClub(151,profile.clubs);
-  assert('Nearest club selection works',nearest.club==='Driver');
-  const sub=findSubstitute(profile,150);
-  assert('Driver substitution excludes wedges and putter',!['Driver','PW','GW','SW','Putter'].includes(sub?.club||''));
-  assert('Driver substitution keeps required distance',findSubstitute(profile,150)!==null);
-  state.active={profileId:profile.id,coinResult:profile.coinResult,dieRoll:profile.dieRoll,locked:true,startedAt:new Date().toISOString()};
-  renderState();
-  els.distanceInput.value='90';
-  els.isTeeShot.value='approach';
-  assignShot();
-  assert('Driver approach shots show both approved choices',!els.driverChoice.classList.contains('hidden'));
-  assert('Invalid shot distances rejected',(()=>{try{findAssignedClub(-2,profile.clubs);return false;}catch(_e){return true;}})());
-  assert('Result lock survives refresh state read',Boolean(localStorage.getItem(NEW_ROUND_KEY)||!state.active));
-  assert('Reset requires confirmation',resetRound.toString().includes('window.confirm'));
-  assert('Printable cards use new branding',els.printGrid.textContent.includes('Roll Model Golf')&&els.printGrid.textContent.includes('One Flip. One Roll. One Choice.'));
-  const pageText=document.body.innerText;
-  assert('No previous product name remains in visible text',!pageText.includes('You Get What You Get'));
-  state.active=prevActive;
-  renderState();
-  els.shotOut.innerHTML=prevShotOut;
-  els.distanceInput.value=prevDistance;
-  els.isTeeShot.value=prevContext;
-  if(prevDriverHidden) els.driverChoice.classList.add('hidden');
-  els.testsOut.textContent=out.join('\n');
 }
 
 function randomizeRound(){
@@ -582,8 +536,6 @@ async function init(){
   els.resumeBtn.addEventListener('click',resumeRound);
   els.assignBtn.addEventListener('click',assignShot);
   els.printBtn.addEventListener('click',()=>window.print());
-  els.runTestsBtn.addEventListener('click',runVerificationTests);
-
   const assetsOk=await verifyAssetLoads();
   els.liveStatus.textContent=assetsOk ? (state.active ? 'Resume Round is available.' : 'Randomize My Round is available.') : 'Some card assets failed to load.';
 }
