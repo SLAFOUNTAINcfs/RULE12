@@ -375,8 +375,8 @@ function renderState(){
   const pendingSection=document.getElementById('pendingSection');
   const bagSection=document.getElementById('bagSection');
   if(hasActive){
-    activeTopAnchor.insertAdjacentElement('afterend', els.activeSection);
-    els.activeSection.insertAdjacentElement('afterend', els.playSection);
+    activeTopAnchor.insertAdjacentElement('afterend', els.playSection);
+    els.playSection.insertAdjacentElement('afterend', els.activeSection);
   } else {
     pendingSection.insertAdjacentElement('afterend', els.activeSection);
     bagSection.insertAdjacentElement('beforebegin', els.playSection);
@@ -576,7 +576,7 @@ function resetRound(){
 
 function resumeRound(){
   renderState();
-  els.activeSection.scrollIntoView({behavior:(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)?'auto':'smooth'});
+  els.playSection.scrollIntoView({behavior:(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)?'auto':'smooth'});
   els.liveStatus.textContent='Resumed locked round.';
 }
 
