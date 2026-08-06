@@ -102,6 +102,8 @@ th{background:var(--surface);color:var(--muted)}
 .confirm-card{display:grid;gap:8px;padding:12px;border:1px solid var(--row);border-radius:12px;background:#10131a}
 .confirm-title{font-weight:800;font-size:1.1rem}
 .confirm-subtitle{color:var(--muted)}
+.chip-club-label{font-size:2rem;font-weight:800;text-align:center;margin:4px 0 14px}
+.chip-why-content{display:grid;gap:8px;margin-top:8px}
 .confirm-actions{display:flex;flex-wrap:wrap;gap:8px}
 .confirm-actions button{width:auto;min-width:140px}
 .print-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
@@ -150,15 +152,41 @@ th{background:var(--surface);color:var(--muted)}
     <p>Flip once, roll once, and reveal rarity to select the golf profile you must use for the entire round.</p>
     <p>Every listed number is a made-up total-distance target for gameplay.</p>
     <p class="muted">All distances are total distance, not carry. The printed numbers are game targets, not personal club recommendations.</p>
-    <div class="secondary-details mt8">
-      <p><strong>Roll Model Golf</strong></p>
-      <p>One Flip. One Roll. One Choice.</p>
-      <p>Flip once, roll once, and reveal rarity to select the golf profile you must use for the entire round.</p>
-      <p>Every listed number is a made-up total-distance target for gameplay.</p>
-      <p class="muted">All distances are total distance, not carry. The printed numbers are game targets, not personal club recommendations.</p>
-      <p class="muted">Randomize My Round | Print Cards</p>
-      <p class="muted">Round reset. Randomize My Round is available again.</p>
-    </div>
+    <details class="secondary-details mt8">
+      <summary>How to Play</summary>
+      <div class="mt8">
+        <p><strong>Start Your Round</strong></p>
+        <p>Tap Randomize My Round and choose one of the three rarity cards shown.</p>
+        <p>Your selected profile is locked for the full 18-hole round.</p>
+        <p>Play from the available tee closest to the yardage listed on your card.</p>
+        <p>You cannot reroll during an active round unless you reset the round.</p>
+
+        <p><strong>Play a Normal Shot</strong></p>
+        <p>Under NEXT SHOT, select the listed target yardage closest to the distance you need.</p>
+        <p>The app shows the assigned club, target distance, target zone, and stroke reward.</p>
+        <p>After hitting the shot, select Hit Target Zone or Missed Target Zone.</p>
+        <p>Judge the shot by where the ball finishes, not where it first lands.</p>
+
+        <p><strong>Driver Option</strong></p>
+        <p>When Driver is assigned from the fairway, you may hit Driver off the deck or use the next-closest available wood, hybrid, or iron.</p>
+        <p>The original target distance and target zone do not change with a substitute club.</p>
+
+        <p><strong>Around the Green</strong></p>
+        <p>Use Around the Green when the ball is within 25 yards of the front edge.</p>
+        <p>Enter distance to hole and distance to front edge. The app recommends club, landing zone, and predicted rollout.</p>
+        <p>Chip targets: Common (full flagstick), Rare (half flagstick), Epic (three player foot lengths), Legendary (one player foot length).</p>
+        <p>A holed chip counts as a successful chip target.</p>
+
+        <p><strong>Putting</strong></p>
+        <p>When on the putting surface, select Putting and record total putts for that hole.</p>
+        <p>Select 0 for a hole-out from off the green, or 1-7 for exact putts.</p>
+        <p>Putting totals track across all 18 holes and award a round-end rarity bonus when qualified.</p>
+
+        <p><strong>Final Score</strong></p>
+        <p>Final Roll Model score may include distance-target reductions, chip-target reductions, and a putting bonus.</p>
+        <p>Only successful targets remove strokes from gross score.</p>
+      </div>
+    </details>
     <div class="actions">
       <button id="randomizeBtn" type="button" class="btn-inline" aria-label="Randomize my golf round">Randomize My Round</button>
       <button id="resumeBtn" type="button" class="btn-inline btn-secondary hidden">Resume Round</button>
@@ -201,9 +229,9 @@ th{background:var(--surface);color:var(--muted)}
     </div>
     <div id="progressToggleWrap" class="progress-toggle-wrap"></div>
     <div id="roundScore" class="mt10"></div>
-    <p class="locked">Locked in.</p>
-    <p class="muted">Play the available tee closest to <span id="teeYardage"></span> yards.</p>
-    <p class="muted">Judge the shot by where the ball finishes, not where it first lands. Putter is always allowed from the putting surface.</p>
+    <p class="locked" data-round-instruction="true">Locked in.</p>
+    <p class="muted" data-round-instruction="true">Play the available tee closest to <span id="teeYardage"></span> yards.</p>
+    <p class="muted" data-round-instruction="true">Judge the shot by where the ball finishes, not where it first lands. Putter is always allowed from the putting surface.</p>
   </section>
 
   <section id="bagSection" class="card no-print hidden">
@@ -215,37 +243,61 @@ th{background:var(--surface);color:var(--muted)}
   <section id="rulesSection" class="card no-print hidden">
     <h2>How to Play</h2>
     <ol class="rules">
-      <li>Tap Randomize My Round, then choose one of the three rarity cards shown.</li>
-      <li>Your selected profile is locked for the full 18-hole round.</li>
-      <li>Review your active card and play the tee closest to the listed tee yardage.</li>
-      <li>In NEXT SHOT, open Target Yardage and select the listed yardage closest to the shot you need.</li>
-      <li>The app assigns the matching club and shows the Target, Target Zone, and Reward.</li>
-      <li>Hit the shot, then report the outcome with one button: Hit Target Zone or Missed Target Zone.</li>
-      <li>Scoring is based on where the ball finishes (total distance), not where it first lands.</li>
-      <li>If you hit the target zone, you earn the displayed stroke reward for your locked rarity.</li>
-      <li>If you miss the target zone, no stroke reduction is awarded for that shot.</li>
-      <li>Tap Next Shot to continue, or Undo to remove only the most recent recorded shot.</li>
-      <li>Use Optional details only when needed to adjust Hole Number, Shot Number, or add a note.</li>
-      <li>If Driver is assigned off the tee, you may use Driver off the deck or a next-closest available wood, hybrid, or iron.</li>
-      <li>The target yardage and target zone do not change under the Driver option.</li>
-      <li>Putter is always allowed from the putting surface.</li>
-      <li>No rerolls during an active round unless you reset the round.</li>
-      <li>When the ball reaches the green, select Putting and record the total putts taken on that hole.</li>
-      <li>Select 0 for a hole-out from off the green.</li>
-      <li>Putting results are tallied across all 18 holes.</li>
-      <li>The putting bonus is awarded once at the end of the round when the rarity target is met.</li>
-      <li>Use Around the Green when the ball is within 25 yards of the front edge of the green.</li>
-      <li>Enter the distance to the hole and the distance to the front edge.</li>
-      <li>The calculator recommends an available club and a landing zone that is on the green.</li>
-      <li>The suggested landing distance is measured from the ball.</li>
-      <li>The distance onto the green is measured from the front edge.</li>
-      <li>After an Around the Green shot, judge the ball by its final resting distance from the cup.</li>
-      <li>Common must finish within one full flagstick height.</li>
-      <li>Rare must finish within half a flagstick height.</li>
-      <li>Epic must finish within three of the player's actual foot lengths.</li>
-      <li>Legendary must finish within one of the player's actual foot lengths.</li>
-      <li>A foot length means the player's actual heel-to-toe measurement, not 12 inches.</li>
-      <li>A holed chip automatically counts as a successful chip target.</li>
+      <li>
+        <strong>Start Your Round</strong>
+        <p>Tap Randomize My Round.</p>
+        <p>Choose one of the three rarity cards shown.</p>
+        <p>Your selected profile is locked for the full 18-hole round.</p>
+        <p>Play from the available tee closest to the yardage listed on your card.</p>
+        <p>You cannot reroll during an active round unless you reset the round.</p>
+      </li>
+      <li>
+        <strong>Play a Normal Shot</strong>
+        <p>Under NEXT SHOT, select the listed target yardage closest to the distance you need.</p>
+        <p>The app will show the assigned club, the target distance, the acceptable target zone, and the stroke reward.</p>
+        <p>Hit the shot, then select Hit Target Zone or Missed Target Zone.</p>
+        <p>Judge the shot by where the ball finishes, not where it first lands.</p>
+        <p>A successful shot earns the displayed stroke reward for your rarity. A missed target earns no stroke reduction.</p>
+        <p>Select Next Shot to continue. Select Undo to remove only the most recently recorded shot.</p>
+        <p>Use Optional Details only when you need to change the hole number, shot number, or add a note.</p>
+      </li>
+      <li>
+        <strong>Driver Option</strong>
+        <p>When Driver is assigned for a shot from the fairway, you may hit Driver off the deck or use the next-closest available wood, hybrid, or iron.</p>
+        <p>The original target distance and target zone do not change when using a substitute club.</p>
+      </li>
+      <li>
+        <strong>Around the Green</strong>
+        <p>Use Around the Green when your ball is within 25 yards of the front edge of the green.</p>
+        <p>Enter distance from the ball to the hole and distance from the ball to the front edge of the green.</p>
+        <p>The calculator will recommend an available club, a landing zone on the green, and the predicted rollout.</p>
+        <p>Landing distance is measured from the ball.</p>
+        <p>Distance onto the green is measured from the front edge.</p>
+        <p>After hitting the chip, judge the result by the ball's final resting distance from the cup.</p>
+        <p><strong>Chip Targets</strong></p>
+        <p>Common: Within one full flagstick height.</p>
+        <p>Rare: Within half a flagstick height.</p>
+        <p>Epic: Within three of the player's actual foot lengths.</p>
+        <p>Legendary: Within one of the player's actual foot lengths.</p>
+        <p>A player-foot length means the player's actual heel-to-toe measurement, not the 12-inch unit of measurement.</p>
+        <p>A holed chip automatically counts as a successful chip target.</p>
+      </li>
+      <li>
+        <strong>Putting</strong>
+        <p>When the ball reaches the putting surface, select Putting.</p>
+        <p>Record the total number of putts taken on that hole.</p>
+        <p>Select 0 for a hole-out from off the green.</p>
+        <p>Select 1-7 for the exact number of putts taken.</p>
+        <p>Each hole should have one putting result.</p>
+        <p>Putting totals are tracked across all 18 holes.</p>
+        <p>The putting bonus is awarded once at the end of the round when the target for your rarity is met.</p>
+        <p>The putter is always allowed from the putting surface.</p>
+      </li>
+      <li>
+        <strong>Final Score</strong>
+        <p>Your final Roll Model score may include distance-target stroke reductions, chip-target stroke reductions, and a round-end putting bonus.</p>
+        <p>Only successful targets remove strokes from your gross score.</p>
+      </li>
     </ol>
   </section>
 
@@ -318,7 +370,7 @@ const SHORT_GAME_SPEEDS={
 const LANDING_INCREMENT_YARDS=0.5;
 const SHORT_GAME_LOFT_ORDER=['5-Iron','6-Iron','7-Iron','8-Iron','9-Iron','PW','GW','SW','LW'];
 const EMBEDDED_RESULTS={"game":"Roll Model Golf","tagline":"One Flip. One Roll. One Choice.","distanceType":"total","version":4,"profiles":[{"id":"female-age-10-common","gender":"Female","coinResult":"Heads","dieRoll":1,"ageGroup":"Age 10","rarity":"Common","performanceLabel":"Developing","teeYardage":3024,"distanceType":"total","clubs":{"Driver":148,"3-Wood":123,"5-Wood":107,"H1 / 2-Iron":90,"3-Iron":89,"4-Iron":84,"5-Iron":80,"6-Iron":77,"7-Iron":74,"8-Iron":66,"9-Iron":57,"PW":56,"GW":48,"SW":41,"LW":29},"svg":"svg/female-age-10-common.svg"},{"id":"female-age-10-rare","gender":"Female","coinResult":"Heads","dieRoll":1,"ageGroup":"Age 10","rarity":"Rare","performanceLabel":"Established","teeYardage":3348,"distanceType":"total","clubs":{"Driver":166,"3-Wood":138,"5-Wood":120,"H1 / 2-Iron":101,"3-Iron":99,"4-Iron":95,"5-Iron":90,"6-Iron":86,"7-Iron":83,"8-Iron":74,"9-Iron":64,"PW":63,"GW":54,"SW":46,"LW":32},"svg":"svg/female-age-10-rare.svg"},{"id":"female-age-10-epic","gender":"Female","coinResult":"Heads","dieRoll":1,"ageGroup":"Age 10","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":3600,"distanceType":"total","clubs":{"Driver":180,"3-Wood":150,"5-Wood":130,"H1 / 2-Iron":110,"3-Iron":108,"4-Iron":103,"5-Iron":98,"6-Iron":94,"7-Iron":90,"8-Iron":80,"9-Iron":70,"PW":68,"GW":59,"SW":50,"LW":35},"svg":"svg/female-age-10-epic.svg"},{"id":"female-age-10-legendary","gender":"Female","coinResult":"Heads","dieRoll":1,"ageGroup":"Age 10","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":3888,"distanceType":"total","clubs":{"Driver":211,"3-Wood":175,"5-Wood":151,"H1 / 2-Iron":128,"3-Iron":125,"4-Iron":119,"5-Iron":113,"6-Iron":109,"7-Iron":104,"8-Iron":92,"9-Iron":81,"PW":78,"GW":68,"SW":57,"LW":40},"svg":"svg/female-age-10-legendary.svg"},{"id":"female-18-29-common","gender":"Female","coinResult":"Heads","dieRoll":2,"ageGroup":"Ages 18-29","rarity":"Common","performanceLabel":"Developing","teeYardage":4032,"distanceType":"total","clubs":{"Driver":189,"3-Wood":164,"5-Wood":139,"H1 / 2-Iron":119,"3-Iron":113,"4-Iron":109,"5-Iron":105,"6-Iron":102,"7-Iron":98,"8-Iron":89,"9-Iron":78,"PW":76,"GW":67,"SW":57,"LW":45},"svg":"svg/female-18-29-common.svg"},{"id":"female-18-29-rare","gender":"Female","coinResult":"Heads","dieRoll":2,"ageGroup":"Ages 18-29","rarity":"Rare","performanceLabel":"Established","teeYardage":4464,"distanceType":"total","clubs":{"Driver":212,"3-Wood":184,"5-Wood":156,"H1 / 2-Iron":133,"3-Iron":127,"4-Iron":122,"5-Iron":118,"6-Iron":114,"7-Iron":110,"8-Iron":99,"9-Iron":87,"PW":86,"GW":75,"SW":64,"LW":51},"svg":"svg/female-18-29-rare.svg"},{"id":"female-18-29-epic","gender":"Female","coinResult":"Heads","dieRoll":2,"ageGroup":"Ages 18-29","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":4800,"distanceType":"total","clubs":{"Driver":230,"3-Wood":200,"5-Wood":170,"H1 / 2-Iron":145,"3-Iron":138,"4-Iron":133,"5-Iron":128,"6-Iron":124,"7-Iron":120,"8-Iron":108,"9-Iron":95,"PW":93,"GW":82,"SW":70,"LW":55},"svg":"svg/female-18-29-epic.svg"},{"id":"female-18-29-legendary","gender":"Female","coinResult":"Heads","dieRoll":2,"ageGroup":"Ages 18-29","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":5328,"distanceType":"total","clubs":{"Driver":267,"3-Wood":231,"5-Wood":196,"H1 / 2-Iron":167,"3-Iron":159,"4-Iron":153,"5-Iron":147,"6-Iron":142,"7-Iron":138,"8-Iron":124,"9-Iron":109,"PW":106,"GW":94,"SW":80,"LW":62},"svg":"svg/female-18-29-legendary.svg","sourceCategory":"elite-tour-composite"},{"id":"female-30-44-common","gender":"Female","coinResult":"Heads","dieRoll":3,"ageGroup":"Ages 30-44","rarity":"Common","performanceLabel":"Developing","teeYardage":4368,"distanceType":"total","clubs":{"Driver":197,"3-Wood":172,"5-Wood":148,"H1 / 2-Iron":123,"3-Iron":117,"4-Iron":113,"5-Iron":109,"6-Iron":106,"7-Iron":103,"8-Iron":93,"9-Iron":82,"PW":80,"GW":71,"SW":61,"LW":49},"svg":"svg/female-30-44-common.svg"},{"id":"female-30-44-rare","gender":"Female","coinResult":"Heads","dieRoll":3,"ageGroup":"Ages 30-44","rarity":"Rare","performanceLabel":"Established","teeYardage":4836,"distanceType":"total","clubs":{"Driver":221,"3-Wood":193,"5-Wood":166,"H1 / 2-Iron":138,"3-Iron":132,"4-Iron":127,"5-Iron":122,"6-Iron":119,"7-Iron":115,"8-Iron":104,"9-Iron":92,"PW":90,"GW":80,"SW":69,"LW":55},"svg":"svg/female-30-44-rare.svg"},{"id":"female-30-44-epic","gender":"Female","coinResult":"Heads","dieRoll":3,"ageGroup":"Ages 30-44","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":5200,"distanceType":"total","clubs":{"Driver":240,"3-Wood":210,"5-Wood":180,"H1 / 2-Iron":150,"3-Iron":143,"4-Iron":138,"5-Iron":133,"6-Iron":129,"7-Iron":125,"8-Iron":113,"9-Iron":100,"PW":98,"GW":87,"SW":75,"LW":60},"svg":"svg/female-30-44-epic.svg"},{"id":"female-30-44-legendary","gender":"Female","coinResult":"Heads","dieRoll":3,"ageGroup":"Ages 30-44","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":5772,"distanceType":"total","clubs":{"Driver":276,"3-Wood":241,"5-Wood":206,"H1 / 2-Iron":171,"3-Iron":163,"4-Iron":157,"5-Iron":152,"6-Iron":147,"7-Iron":142,"8-Iron":128,"9-Iron":114,"PW":111,"GW":98,"SW":85,"LW":68},"svg":"svg/female-30-44-legendary.svg","sourceCategory":"elite-tour-composite"},{"id":"female-45-59-common","gender":"Female","coinResult":"Heads","dieRoll":4,"ageGroup":"Ages 45-59","rarity":"Common","performanceLabel":"Developing","teeYardage":3864,"distanceType":"total","clubs":{"Driver":172,"3-Wood":148,"5-Wood":127,"H1 / 2-Iron":107,"3-Iron":105,"4-Iron":101,"5-Iron":97,"6-Iron":93,"7-Iron":90,"8-Iron":82,"9-Iron":74,"PW":72,"GW":63,"SW":53,"LW":41},"svg":"svg/female-45-59-common.svg"},{"id":"female-45-59-rare","gender":"Female","coinResult":"Heads","dieRoll":4,"ageGroup":"Ages 45-59","rarity":"Rare","performanceLabel":"Established","teeYardage":4278,"distanceType":"total","clubs":{"Driver":193,"3-Wood":166,"5-Wood":143,"H1 / 2-Iron":120,"3-Iron":118,"4-Iron":113,"5-Iron":109,"6-Iron":105,"7-Iron":101,"8-Iron":92,"9-Iron":83,"PW":81,"GW":71,"SW":60,"LW":46},"svg":"svg/female-45-59-rare.svg"},{"id":"female-45-59-epic","gender":"Female","coinResult":"Heads","dieRoll":4,"ageGroup":"Ages 45-59","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":4600,"distanceType":"total","clubs":{"Driver":210,"3-Wood":180,"5-Wood":155,"H1 / 2-Iron":130,"3-Iron":128,"4-Iron":123,"5-Iron":118,"6-Iron":114,"7-Iron":110,"8-Iron":100,"9-Iron":90,"PW":88,"GW":77,"SW":65,"LW":50},"svg":"svg/female-45-59-epic.svg"},{"id":"female-45-59-legendary","gender":"Female","coinResult":"Heads","dieRoll":4,"ageGroup":"Ages 45-59","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":5014,"distanceType":"total","clubs":{"Driver":237,"3-Wood":203,"5-Wood":174,"H1 / 2-Iron":146,"3-Iron":144,"4-Iron":138,"5-Iron":132,"6-Iron":128,"7-Iron":123,"8-Iron":112,"9-Iron":101,"PW":98,"GW":86,"SW":72,"LW":56},"svg":"svg/female-45-59-legendary.svg","sourceCategory":"elite-tour-composite"},{"id":"female-60-74-common","gender":"Female","coinResult":"Heads","dieRoll":5,"ageGroup":"Ages 60-74","rarity":"Common","performanceLabel":"Developing","teeYardage":3360,"distanceType":"total","clubs":{"Driver":152,"3-Wood":131,"5-Wood":111,"H1 / 2-Iron":94,"3-Iron":90,"4-Iron":86,"5-Iron":82,"6-Iron":78,"7-Iron":74,"8-Iron":70,"9-Iron":66,"PW":64,"GW":55,"SW":45,"LW":33},"svg":"svg/female-60-74-common.svg"},{"id":"female-60-74-rare","gender":"Female","coinResult":"Heads","dieRoll":5,"ageGroup":"Ages 60-74","rarity":"Rare","performanceLabel":"Established","teeYardage":3720,"distanceType":"total","clubs":{"Driver":170,"3-Wood":147,"5-Wood":124,"H1 / 2-Iron":106,"3-Iron":102,"4-Iron":98,"5-Iron":94,"6-Iron":90,"7-Iron":86,"8-Iron":83,"9-Iron":74,"PW":72,"GW":62,"SW":51,"LW":37},"svg":"svg/female-60-74-rare.svg"},{"id":"female-60-74-epic","gender":"Female","coinResult":"Heads","dieRoll":5,"ageGroup":"Ages 60-74","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":4000,"distanceType":"total","clubs":{"Driver":185,"3-Wood":160,"5-Wood":135,"H1 / 2-Iron":115,"3-Iron":111,"4-Iron":107,"5-Iron":103,"6-Iron":99,"7-Iron":95,"8-Iron":90,"9-Iron":80,"PW":78,"GW":67,"SW":55,"LW":40},"svg":"svg/female-60-74-epic.svg"},{"id":"female-60-74-legendary","gender":"Female","coinResult":"Heads","dieRoll":5,"ageGroup":"Ages 60-74","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":4280,"distanceType":"total","clubs":{"Driver":204,"3-Wood":176,"5-Wood":148,"H1 / 2-Iron":126,"3-Iron":122,"4-Iron":118,"5-Iron":114,"6-Iron":110,"7-Iron":109,"8-Iron":98,"9-Iron":87,"PW":85,"GW":73,"SW":60,"LW":43},"svg":"svg/female-60-74-legendary.svg","sourceCategory":"elite-tour-composite"},{"id":"female-75-plus-common","gender":"Female","coinResult":"Heads","dieRoll":6,"ageGroup":"Ages 75+","rarity":"Common","performanceLabel":"Developing","teeYardage":2688,"distanceType":"total","clubs":{"Driver":127,"3-Wood":107,"5-Wood":90,"H1 / 2-Iron":78,"3-Iron":74,"4-Iron":70,"5-Iron":66,"6-Iron":62,"7-Iron":58,"8-Iron":54,"9-Iron":53,"PW":52,"GW":44,"SW":37,"LW":25},"svg":"svg/female-75-plus-common.svg"},{"id":"female-75-plus-rare","gender":"Female","coinResult":"Heads","dieRoll":6,"ageGroup":"Ages 75+","rarity":"Rare","performanceLabel":"Established","teeYardage":2976,"distanceType":"total","clubs":{"Driver":143,"3-Wood":120,"5-Wood":101,"H1 / 2-Iron":87,"3-Iron":83,"4-Iron":79,"5-Iron":75,"6-Iron":71,"7-Iron":67,"8-Iron":63,"9-Iron":60,"PW":58,"GW":50,"SW":41,"LW":28},"svg":"svg/female-75-plus-rare.svg"},{"id":"female-75-plus-epic","gender":"Female","coinResult":"Heads","dieRoll":6,"ageGroup":"Ages 75+","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":3200,"distanceType":"total","clubs":{"Driver":155,"3-Wood":130,"5-Wood":110,"H1 / 2-Iron":95,"3-Iron":91,"4-Iron":87,"5-Iron":83,"6-Iron":79,"7-Iron":75,"8-Iron":73,"9-Iron":65,"PW":63,"GW":54,"SW":45,"LW":30},"svg":"svg/female-75-plus-epic.svg"},{"id":"female-75-plus-legendary","gender":"Female","coinResult":"Heads","dieRoll":6,"ageGroup":"Ages 75+","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":3360,"distanceType":"total","clubs":{"Driver":166,"3-Wood":139,"5-Wood":117,"H1 / 2-Iron":101,"3-Iron":97,"4-Iron":93,"5-Iron":89,"6-Iron":85,"7-Iron":81,"8-Iron":78,"9-Iron":69,"PW":67,"GW":57,"SW":48,"LW":32},"svg":"svg/female-75-plus-legendary.svg","sourceCategory":"elite-tour-composite"},{"id":"male-age-10-common","gender":"Male","coinResult":"Tails","dieRoll":1,"ageGroup":"Age 10","rarity":"Common","performanceLabel":"Developing","teeYardage":3528,"distanceType":"total","clubs":{"Driver":172,"3-Wood":144,"5-Wood":123,"H1 / 2-Iron":103,"3-Iron":101,"4-Iron":97,"5-Iron":93,"6-Iron":89,"7-Iron":86,"8-Iron":78,"9-Iron":70,"PW":68,"GW":59,"SW":49,"LW":37},"svg":"svg/male-age-10-common.svg"},{"id":"male-age-10-rare","gender":"Male","coinResult":"Tails","dieRoll":1,"ageGroup":"Age 10","rarity":"Rare","performanceLabel":"Established","teeYardage":3906,"distanceType":"total","clubs":{"Driver":193,"3-Wood":161,"5-Wood":138,"H1 / 2-Iron":115,"3-Iron":113,"4-Iron":109,"5-Iron":104,"6-Iron":100,"7-Iron":97,"8-Iron":87,"9-Iron":78,"PW":76,"GW":66,"SW":55,"LW":41},"svg":"svg/male-age-10-rare.svg"},{"id":"male-age-10-epic","gender":"Male","coinResult":"Tails","dieRoll":1,"ageGroup":"Age 10","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":4200,"distanceType":"total","clubs":{"Driver":210,"3-Wood":175,"5-Wood":150,"H1 / 2-Iron":125,"3-Iron":123,"4-Iron":118,"5-Iron":113,"6-Iron":109,"7-Iron":105,"8-Iron":95,"9-Iron":85,"PW":83,"GW":72,"SW":60,"LW":45},"svg":"svg/male-age-10-epic.svg"},{"id":"male-age-10-legendary","gender":"Male","coinResult":"Tails","dieRoll":1,"ageGroup":"Age 10","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":4494,"distanceType":"total","clubs":{"Driver":244,"3-Wood":202,"5-Wood":173,"H1 / 2-Iron":144,"3-Iron":141,"4-Iron":136,"5-Iron":130,"6-Iron":125,"7-Iron":120,"8-Iron":109,"9-Iron":97,"PW":95,"GW":82,"SW":68,"LW":51},"svg":"svg/male-age-10-legendary.svg"},{"id":"male-18-29-common","gender":"Male","coinResult":"Tails","dieRoll":2,"ageGroup":"Ages 18-29","rarity":"Common","performanceLabel":"Developing","teeYardage":5376,"distanceType":"total","clubs":{"Driver":238,"3-Wood":205,"5-Wood":176,"H1 / 2-Iron":148,"3-Iron":140,"4-Iron":134,"5-Iron":130,"6-Iron":126,"7-Iron":123,"8-Iron":111,"9-Iron":98,"PW":97,"GW":84,"SW":70,"LW":57},"svg":"svg/male-18-29-common.svg"},{"id":"male-18-29-rare","gender":"Male","coinResult":"Tails","dieRoll":2,"ageGroup":"Ages 18-29","rarity":"Rare","performanceLabel":"Established","teeYardage":5952,"distanceType":"total","clubs":{"Driver":267,"3-Wood":230,"5-Wood":198,"H1 / 2-Iron":166,"3-Iron":157,"4-Iron":150,"5-Iron":145,"6-Iron":142,"7-Iron":138,"8-Iron":124,"9-Iron":110,"PW":109,"GW":94,"SW":78,"LW":64},"svg":"svg/male-18-29-rare.svg"},{"id":"male-18-29-epic","gender":"Male","coinResult":"Tails","dieRoll":2,"ageGroup":"Ages 18-29","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":6400,"distanceType":"total","clubs":{"Driver":290,"3-Wood":250,"5-Wood":215,"H1 / 2-Iron":180,"3-Iron":171,"4-Iron":163,"5-Iron":158,"6-Iron":154,"7-Iron":150,"8-Iron":135,"9-Iron":120,"PW":118,"GW":102,"SW":85,"LW":70},"svg":"svg/male-18-29-epic.svg"},{"id":"male-18-29-legendary","gender":"Male","coinResult":"Tails","dieRoll":2,"ageGroup":"Ages 18-29","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":7040,"distanceType":"total","clubs":{"Driver":334,"3-Wood":287,"5-Wood":246,"H1 / 2-Iron":206,"3-Iron":195,"4-Iron":186,"5-Iron":180,"6-Iron":175,"7-Iron":171,"8-Iron":153,"9-Iron":136,"PW":134,"GW":115,"SW":96,"LW":79},"svg":"svg/male-18-29-legendary.svg","sourceCategory":"elite-tour-composite"},{"id":"male-30-44-common","gender":"Male","coinResult":"Tails","dieRoll":3,"ageGroup":"Ages 30-44","rarity":"Common","performanceLabel":"Developing","teeYardage":5796,"distanceType":"total","clubs":{"Driver":254,"3-Wood":217,"5-Wood":185,"H1 / 2-Iron":156,"3-Iron":148,"4-Iron":138,"5-Iron":134,"6-Iron":130,"7-Iron":127,"8-Iron":115,"9-Iron":103,"PW":101,"GW":88,"SW":74,"LW":61},"svg":"svg/male-30-44-common.svg"},{"id":"male-30-44-rare","gender":"Male","coinResult":"Tails","dieRoll":3,"ageGroup":"Ages 30-44","rarity":"Rare","performanceLabel":"Established","teeYardage":6417,"distanceType":"total","clubs":{"Driver":285,"3-Wood":244,"5-Wood":207,"H1 / 2-Iron":175,"3-Iron":167,"4-Iron":155,"5-Iron":150,"6-Iron":146,"7-Iron":143,"8-Iron":129,"9-Iron":115,"PW":113,"GW":98,"SW":83,"LW":69},"svg":"svg/male-30-44-rare.svg"},{"id":"male-30-44-epic","gender":"Male","coinResult":"Tails","dieRoll":3,"ageGroup":"Ages 30-44","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":6900,"distanceType":"total","clubs":{"Driver":310,"3-Wood":265,"5-Wood":225,"H1 / 2-Iron":190,"3-Iron":181,"4-Iron":168,"5-Iron":163,"6-Iron":159,"7-Iron":155,"8-Iron":140,"9-Iron":125,"PW":123,"GW":107,"SW":90,"LW":75},"svg":"svg/male-30-44-epic.svg"},{"id":"male-30-44-legendary","gender":"Male","coinResult":"Tails","dieRoll":3,"ageGroup":"Ages 30-44","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":7590,"distanceType":"total","clubs":{"Driver":353,"3-Wood":301,"5-Wood":255,"H1 / 2-Iron":215,"3-Iron":205,"4-Iron":190,"5-Iron":184,"6-Iron":179,"7-Iron":175,"8-Iron":158,"9-Iron":141,"PW":138,"GW":120,"SW":101,"LW":84},"svg":"svg/male-30-44-legendary.svg","sourceCategory":"elite-tour-composite"},{"id":"male-45-59-common","gender":"Male","coinResult":"Tails","dieRoll":4,"ageGroup":"Ages 45-59","rarity":"Common","performanceLabel":"Developing","teeYardage":5208,"distanceType":"total","clubs":{"Driver":230,"3-Wood":197,"5-Wood":168,"H1 / 2-Iron":139,"3-Iron":133,"4-Iron":125,"5-Iron":121,"6-Iron":118,"7-Iron":115,"8-Iron":105,"9-Iron":94,"PW":93,"GW":80,"SW":66,"LW":53},"svg":"svg/male-45-59-common.svg"},{"id":"male-45-59-rare","gender":"Male","coinResult":"Tails","dieRoll":4,"ageGroup":"Ages 45-59","rarity":"Rare","performanceLabel":"Established","teeYardage":5766,"distanceType":"total","clubs":{"Driver":258,"3-Wood":221,"5-Wood":189,"H1 / 2-Iron":156,"3-Iron":149,"4-Iron":141,"5-Iron":136,"6-Iron":132,"7-Iron":129,"8-Iron":118,"9-Iron":106,"PW":104,"GW":89,"SW":74,"LW":60},"svg":"svg/male-45-59-rare.svg"},{"id":"male-45-59-epic","gender":"Male","coinResult":"Tails","dieRoll":4,"ageGroup":"Ages 45-59","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":6200,"distanceType":"total","clubs":{"Driver":280,"3-Wood":240,"5-Wood":205,"H1 / 2-Iron":170,"3-Iron":162,"4-Iron":153,"5-Iron":148,"6-Iron":144,"7-Iron":140,"8-Iron":128,"9-Iron":115,"PW":113,"GW":97,"SW":80,"LW":65},"svg":"svg/male-45-59-epic.svg"},{"id":"male-45-59-legendary","gender":"Male","coinResult":"Tails","dieRoll":4,"ageGroup":"Ages 45-59","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":6696,"distanceType":"total","clubs":{"Driver":314,"3-Wood":268,"5-Wood":229,"H1 / 2-Iron":189,"3-Iron":180,"4-Iron":170,"5-Iron":165,"6-Iron":160,"7-Iron":155,"8-Iron":142,"9-Iron":127,"PW":125,"GW":107,"SW":88,"LW":72},"svg":"svg/male-45-59-legendary.svg","sourceCategory":"elite-tour-composite"},{"id":"male-60-74-common","gender":"Male","coinResult":"Tails","dieRoll":5,"ageGroup":"Ages 60-74","rarity":"Common","performanceLabel":"Developing","teeYardage":4704,"distanceType":"total","clubs":{"Driver":205,"3-Wood":176,"5-Wood":152,"H1 / 2-Iron":127,"3-Iron":121,"4-Iron":117,"5-Iron":113,"6-Iron":110,"7-Iron":107,"8-Iron":97,"9-Iron":86,"PW":84,"GW":73,"SW":61,"LW":49},"svg":"svg/male-60-74-common.svg"},{"id":"male-60-74-rare","gender":"Male","coinResult":"Tails","dieRoll":5,"ageGroup":"Ages 60-74","rarity":"Rare","performanceLabel":"Established","teeYardage":5208,"distanceType":"total","clubs":{"Driver":230,"3-Wood":198,"5-Wood":170,"H1 / 2-Iron":143,"3-Iron":136,"4-Iron":132,"5-Iron":127,"6-Iron":123,"7-Iron":120,"8-Iron":109,"9-Iron":97,"PW":95,"GW":82,"SW":69,"LW":55},"svg":"svg/male-60-74-rare.svg"},{"id":"male-60-74-epic","gender":"Male","coinResult":"Tails","dieRoll":5,"ageGroup":"Ages 60-74","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":5600,"distanceType":"total","clubs":{"Driver":250,"3-Wood":215,"5-Wood":185,"H1 / 2-Iron":155,"3-Iron":148,"4-Iron":143,"5-Iron":138,"6-Iron":134,"7-Iron":130,"8-Iron":118,"9-Iron":105,"PW":103,"GW":89,"SW":75,"LW":60},"svg":"svg/male-60-74-epic.svg"},{"id":"male-60-74-legendary","gender":"Male","coinResult":"Tails","dieRoll":5,"ageGroup":"Ages 60-74","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":5936,"distanceType":"total","clubs":{"Driver":273,"3-Wood":234,"5-Wood":201,"H1 / 2-Iron":168,"3-Iron":161,"4-Iron":155,"5-Iron":150,"6-Iron":145,"7-Iron":141,"8-Iron":128,"9-Iron":114,"PW":111,"GW":96,"SW":81,"LW":65},"svg":"svg/male-60-74-legendary.svg","sourceCategory":"elite-tour-composite"},{"id":"male-75-plus-common","gender":"Male","coinResult":"Tails","dieRoll":6,"ageGroup":"Ages 75+","rarity":"Common","performanceLabel":"Developing","teeYardage":3864,"distanceType":"total","clubs":{"Driver":168,"3-Wood":144,"5-Wood":119,"H1 / 2-Iron":98,"3-Iron":97,"4-Iron":93,"5-Iron":89,"6-Iron":85,"7-Iron":82,"8-Iron":74,"9-Iron":66,"PW":64,"GW":55,"SW":45,"LW":33},"svg":"svg/male-75-plus-common.svg"},{"id":"male-75-plus-rare","gender":"Male","coinResult":"Tails","dieRoll":6,"ageGroup":"Ages 75+","rarity":"Rare","performanceLabel":"Established","teeYardage":4278,"distanceType":"total","clubs":{"Driver":189,"3-Wood":161,"5-Wood":133,"H1 / 2-Iron":110,"3-Iron":109,"4-Iron":104,"5-Iron":99,"6-Iron":96,"7-Iron":92,"8-Iron":83,"9-Iron":74,"PW":72,"GW":62,"SW":51,"LW":37},"svg":"svg/male-75-plus-rare.svg"},{"id":"male-75-plus-epic","gender":"Male","coinResult":"Tails","dieRoll":6,"ageGroup":"Ages 75+","rarity":"Epic","performanceLabel":"Low Handicap","teeYardage":4600,"distanceType":"total","clubs":{"Driver":205,"3-Wood":175,"5-Wood":145,"H1 / 2-Iron":120,"3-Iron":118,"4-Iron":113,"5-Iron":108,"6-Iron":104,"7-Iron":100,"8-Iron":90,"9-Iron":80,"PW":78,"GW":67,"SW":55,"LW":40},"svg":"svg/male-75-plus-epic.svg"},{"id":"male-75-plus-legendary","gender":"Male","coinResult":"Tails","dieRoll":6,"ageGroup":"Ages 75+","rarity":"Legendary","performanceLabel":"Tour Elite","teeYardage":4784,"distanceType":"total","clubs":{"Driver":217,"3-Wood":185,"5-Wood":153,"H1 / 2-Iron":127,"3-Iron":125,"4-Iron":119,"5-Iron":114,"6-Iron":110,"7-Iron":105,"8-Iron":95,"9-Iron":84,"PW":82,"GW":71,"SW":58,"LW":42},"svg":"svg/male-75-plus-legendary.svg","sourceCategory":"elite-tour-composite"}]};
-const state={profiles:[],pendingOptions:[],active:null,bag:{},selectedDistance:null,currentShot:null,currentPutting:null,currentChipRecommendation:null,progressVisible:false,revealTimeouts:[]};
+const state={profiles:[],pendingOptions:[],active:null,bag:{},selectedDistance:null,currentShot:null,currentPutting:null,currentAroundGreen:null,currentChipRecommendation:null,progressVisible:false,revealTimeouts:[]};
 
 const els={
   randomizeBtn:document.getElementById('randomizeBtn'),resumeBtn:document.getElementById('resumeBtn'),resetBtn:document.getElementById('resetBtn'),printBtn:document.getElementById('printBtn'),
@@ -348,6 +400,13 @@ function focusNextShotPane(){
   const prefersReducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   els.playSection.scrollIntoView({behavior:prefersReducedMotion?'auto':'smooth',block:'start'});
   els.playSection.focus({preventScroll:true});
+}
+
+function updatePlaySectionContextVisibility(){
+  const showingSpecialShotMode=Boolean(state.currentPutting!==null||state.currentAroundGreen!==null||state.currentChipRecommendation!==null);
+  document.querySelectorAll('[data-round-instruction="true"]').forEach((element)=>{
+    element.classList.toggle('hidden',showingSpecialShotMode);
+  });
 }
 
 function secureIndex(max){
@@ -986,7 +1045,9 @@ function renderState(){
     state.selectedDistance=null;
     state.currentShot=null;
     state.currentPutting=null;
+    state.currentAroundGreen=null;
     state.currentChipRecommendation=null;
+    updatePlaySectionContextVisibility();
     return;
   }
 
@@ -1011,6 +1072,7 @@ function renderState(){
   els.activeCard.onclick=()=>openZoom(els.activeCard.currentSrc||els.activeCard.src, els.activeCard.alt);
   renderDistanceButtons(profile);
   renderRoundScore();
+  updatePlaySectionContextVisibility();
 }
 
 function renderDistanceButtons(profile){
@@ -1019,9 +1081,11 @@ function renderDistanceButtons(profile){
   state.selectedDistance=null;
   state.currentShot=null;
   state.currentPutting=null;
+  state.currentAroundGreen=null;
   state.currentChipRecommendation=null;
   els.playOut.innerHTML='';
   els.playResetBtn.classList.add('hidden');
+  updatePlaySectionContextVisibility();
   const options=ASSIGNABLE_CLUB_ORDER.map((club)=>({club,distance:profile.clubs[club]})).filter((item)=>Number.isFinite(item.distance)&&item.distance>0);
   options.forEach((item)=>{
     const btn=document.createElement('button');
@@ -1046,10 +1110,12 @@ function openAroundGreenCalculator(){
   state.selectedDistance=null;
   state.currentShot=null;
   state.currentPutting=null;
+  state.currentAroundGreen={mode:'entry'};
   state.currentChipRecommendation=null;
   els.distanceGrid.classList.add('hidden');
   els.shotConfirmOut.innerHTML='';
-  els.playResetBtn.classList.remove('hidden');
+  els.playResetBtn.classList.add('hidden');
+  updatePlaySectionContextVisibility();
   els.playOut.innerHTML=`
     <div class="target-window-card">
       <h3>AROUND THE GREEN</h3>
@@ -1105,6 +1171,65 @@ function renderAroundGreenResultControls(){
   `;
 }
 
+function renderAroundGreenWhyDetails(recommendation,speedKey,totalDistance,greenEdgeDistance){
+  const hasRuleCalculation=Number.isFinite(recommendation.rawClubNumber)
+    &&Number.isFinite(recommendation.rolloutDistanceYards)
+    &&Number.isFinite(recommendation.carryDistanceYards);
+  const rolloutCenter=Number.isFinite(recommendation.minimumRolloutYards)&&Number.isFinite(recommendation.maximumRolloutYards)
+    ? (recommendation.minimumRolloutYards+recommendation.maximumRolloutYards)/2
+    : null;
+  const calculatedVsAvailableMarkup=hasRuleCalculation&&recommendation.calculatedProfile&&recommendation.selectedProfile&&recommendation.club!==recommendation.calculatedClubName
+    ? `<div class="score-note">Calculated recommendation: ${recommendation.calculatedProfile.club} (${recommendation.calculatedProfile.minimumLoftDegrees}-${recommendation.calculatedProfile.maximumLoftDegrees} deg)</div>
+       <div class="score-note">Available recommendation: ${recommendation.selectedProfile.club} (${recommendation.selectedProfile.minimumLoftDegrees}-${recommendation.selectedProfile.maximumLoftDegrees} deg)</div>`
+    : '';
+  const warningMarkup=recommendation.warning
+    ? `<div class="score-note">${recommendation.warning.replace(/\n/g,'<br>')}</div>`
+    : '';
+  const landingExplanation=(Number.isFinite(recommendation.preferredLandingDistanceYards)&&Number.isFinite(recommendation.preferredDistanceOntoGreenYards))
+    ? `<div class="score-note">The preferred landing point is ${formatDistance(recommendation.preferredLandingDistanceYards)} yards from the ball, or approximately ${formatDistance(recommendation.preferredDistanceOntoGreenYards)} yards onto the green.</div>`
+    : '';
+  const rolloutExplanation=Number.isFinite(rolloutCenter)
+    ? `<div class="score-note">The ball is expected to roll approximately ${formatDistance(rolloutCenter)} yards after landing.</div>`
+    : '';
+  const ruleCalculationMarkup=hasRuleCalculation
+    ? `<div class="score-note">Rule calculation: ${SHORT_GAME_SPEEDS[speedKey].base} - (${formatDistance(recommendation.rolloutDistanceYards)} / ${formatDistance(recommendation.carryDistanceYards)}) = ${formatDistance(recommendation.rawClubNumber)}</div>`
+    : '';
+  const nearestClubMarkup=hasRuleCalculation&&recommendation.calculatedClubName
+    ? `<div class="score-note">The calculated result is closest to ${recommendation.calculatedClubName}.</div>`
+    : '';
+  const clubDetailsMarkup=recommendation.selectedProfile
+    ? `<div class="confirm-title">CLUB DETAILS</div>
+       <div class="score-note">Recommended club: ${recommendation.selectedProfile.club}</div>
+       <div class="score-note">Typical loft: ${recommendation.selectedProfile.minimumLoftDegrees}-${recommendation.selectedProfile.maximumLoftDegrees} deg</div>
+       <div class="score-note">Representative loft: ${formatDistance(recommendation.selectedProfile.representativeLoftDegrees)} deg</div>`
+    : '';
+  return `
+    <details class="secondary-details chip-why-details">
+      <summary>Why?</summary>
+      <div class="chip-why-content">
+        <div class="confirm-title">WHY THIS CLUB?</div>
+        ${landingExplanation}
+        ${rolloutExplanation}
+        ${ruleCalculationMarkup}
+        ${nearestClubMarkup}
+        ${calculatedVsAvailableMarkup}
+        ${warningMarkup}
+        ${clubDetailsMarkup}
+        <div class="confirm-title">SHOT DETAILS</div>
+        <div class="score-note">Distance to hole: ${formatDistance(totalDistance)} yards</div>
+        <div class="score-note">Distance to front edge: ${formatDistance(greenEdgeDistance)} yards</div>
+        <div class="score-note">Green speed: ${recommendation.speedLabel}</div>
+        <div class="score-note">Rule set: ${SHORT_GAME_SPEEDS[speedKey].label}</div>
+        <div class="score-note">Land inside the first three yards of the green. Adjust for green speed and slope, and judge the result by where the ball finishes.</div>
+        <details class="secondary-details">
+          <summary>Club Loft Reference</summary>
+          <div class="score-note mt8">${SHORT_GAME_CLUB_PROFILES.map((profile)=>`${profile.club}: ${profile.minimumLoftDegrees}-${profile.maximumLoftDegrees} deg`).join('<br>')}</div>
+        </details>
+      </div>
+    </details>
+  `;
+}
+
 function renderChipScoringCard(rarity){
   const rule=RARITY_CHIP_RULES[rarity]||RARITY_CHIP_RULES.Common;
   const basisText=rule.measurementBasis==='flagstick'
@@ -1115,7 +1240,6 @@ function renderChipScoringCard(rarity){
       <div class="confirm-title">${rarity.toUpperCase()} CHIP TARGET</div>
       <div class="confirm-subtitle">${basisText}</div>
       <div class="confirm-subtitle">Reward: ${formatStrokeValue(rule.strokeRewardPerHit,2)} stroke${rule.strokeRewardPerHit===1?'':'s'}</div>
-      <div class="confirm-subtitle">Judge the ball by where it finally comes to rest.</div>
       <div class="result-buttons mt8">
         <button id="hitChipTargetBtn" type="button">Hit Chip Target</button>
         <button id="missedChipTargetBtn" type="button" class="btn-secondary">Missed Chip Target</button>
@@ -1260,19 +1384,23 @@ function calculateAroundGreen(){
   const activeRarity=state.active?.rarity||'Common';
 
   if(recommendation.mode==='no-club'){
+    state.currentAroundGreen={mode:'result'};
     state.currentChipRecommendation=null;
+    els.playResetBtn.classList.add('hidden');
     resultOut.innerHTML=`
       <div class="warn">${recommendation.warning}</div>
-      <div class="score-note">Distance to Hole: ${formatDistance(totalDistance)} yards</div>
-      <div class="score-note">Distance to Front Edge: ${formatDistance(greenEdgeDistance)} yards</div>
-      <div class="score-note">Green Speed: ${recommendation.speedLabel}</div>
+      ${renderAroundGreenWhyDetails(recommendation,speedKey,totalDistance,greenEdgeDistance)}
       ${renderAroundGreenResultControls()}
     `;
     document.getElementById('recalculateAroundGreenBtn')?.addEventListener('click',calculateAroundGreen);
     document.getElementById('chooseAnotherShotBtn')?.addEventListener('click',resetDistanceSelection);
+    updatePlaySectionContextVisibility();
     focusNextShotPane();
     return;
   }
+
+  state.currentAroundGreen={mode:'result'};
+  els.playResetBtn.classList.add('hidden');
 
   if(recommendation.mode==='extreme-short-sided'){
     state.currentChipRecommendation={
@@ -1284,83 +1412,61 @@ function calculateAroundGreen(){
       preferredLandingDistanceYards:greenEdgeDistance,
       maximumLandingDistanceYards:greenEdgeDistance
     };
+    const extremeWhy={
+      ...recommendation,
+      warning:'The green space before the hole is too short for the standard 1-3-yard landing model. A highest-loft wedge recommendation is shown to minimize rollout.'
+    };
     resultOut.innerHTML=`
       <div class="confirm-card mt10">
-        <div class="confirm-title">EXTREMELY SHORT-SIDED</div>
-        <div class="confirm-subtitle">There is not enough green before the hole for the standard 1-3-yard landing zone.</div>
-        <div class="confirm-subtitle">Use the highest-lofted available wedge and land the ball as softly as possible near the front edge.</div>
-        <div class="confirm-subtitle">Club: ${recommendation.club}</div>
+        <div class="confirm-title">RECOMMENDED CHIP</div>
+        <div class="chip-club-label">${recommendation.club}</div>
+        <div class="confirm-title">LANDING ZONE</div>
+        <div class="confirm-subtitle">${formatDistance(greenEdgeDistance)}-${formatDistance(greenEdgeDistance)} yards from the ball</div>
+        <div class="confirm-subtitle">Near the front edge of the green</div>
+        <div class="confirm-title">PREDICTED ROLLOUT</div>
+        <div class="confirm-subtitle">Minimal rollout expected</div>
       </div>
-      <div class="score-note">Distance to Hole: ${formatDistance(totalDistance)} yards</div>
-      <div class="score-note">Distance to Front Edge: ${formatDistance(greenEdgeDistance)} yards</div>
-      <div class="score-note">Green Speed: ${recommendation.speedLabel}</div>
-      <details class="secondary-details mt8"><summary>Club Loft Reference</summary><div class="score-note mt8">${SHORT_GAME_CLUB_PROFILES.map((profile)=>`${profile.club}: ${profile.minimumLoftDegrees}-${profile.maximumLoftDegrees} deg`).join('<br>')}</div></details>
       ${renderChipScoringCard(activeRarity)}
+      ${renderAroundGreenWhyDetails(extremeWhy,speedKey,totalDistance,greenEdgeDistance)}
       ${renderAroundGreenResultControls()}
     `;
     attachChipScoringActions();
     document.getElementById('recalculateAroundGreenBtn')?.addEventListener('click',calculateAroundGreen);
     document.getElementById('chooseAnotherShotBtn')?.addEventListener('click',resetDistanceSelection);
+    updatePlaySectionContextVisibility();
     focusNextShotPane();
     return;
   }
 
-  const modeTitle=recommendation.mode==='short-sided'?'SHORT-SIDED SHOT':'RECOMMENDED CHIP';
-  const modeMessage=recommendation.mode==='short-sided'
-    ? '<div class="confirm-subtitle">Less than three yards of green are available before the hole.</div><div class="confirm-subtitle">Land between 1 and '+formatDistance(recommendation.maximumDistanceOntoGreenYards)+' yards onto the green.</div><div class="confirm-subtitle">Use the highest-lofted available wedge and minimize rollout.</div>'
-    : '';
-  const warningMarkup=recommendation.warning?`<div class="warn">${recommendation.warning}</div>`:'';
-  const hasRuleCalculation=Number.isFinite(recommendation.rawClubNumber)
-    &&Number.isFinite(recommendation.rolloutDistanceYards)
-    &&Number.isFinite(recommendation.carryDistanceYards);
-  const ruleCalculationMarkup=hasRuleCalculation
-    ? `<div class="confirm-subtitle">Rule Calculation: ${SHORT_GAME_SPEEDS[speedKey].base} - (${formatDistance(recommendation.rolloutDistanceYards)} / ${formatDistance(recommendation.carryDistanceYards)}) = ${formatDistance(recommendation.rawClubNumber)}</div>
-       <div class="confirm-subtitle">Carry to Preferred Landing Point: ${formatDistance(recommendation.carryDistanceYards)} yards</div>`
-    : '';
-  const calculatedVsAvailableMarkup=hasRuleCalculation&&recommendation.calculatedProfile&&recommendation.selectedProfile&&recommendation.club!==recommendation.calculatedClubName
-    ? `<div class="confirm-subtitle">Calculated Recommendation: ${recommendation.calculatedProfile.club} - ${recommendation.calculatedProfile.minimumLoftDegrees}-${recommendation.calculatedProfile.maximumLoftDegrees} deg</div><div class="confirm-subtitle">Available Recommendation: ${recommendation.selectedProfile.club} - ${recommendation.selectedProfile.minimumLoftDegrees}-${recommendation.selectedProfile.maximumLoftDegrees} deg</div>`
-    : '';
-  const selectedLoftMarkup=recommendation.selectedProfile
-    ? `<div class="confirm-subtitle">Typical Loft Range: ${recommendation.selectedProfile.minimumLoftDegrees}-${recommendation.selectedProfile.maximumLoftDegrees} deg</div>
-       <div class="confirm-subtitle">Representative Loft: ${formatDistance(recommendation.selectedProfile.representativeLoftDegrees)} deg</div>`
-    : '';
-
   state.currentChipRecommendation={...recommendation,distanceToHoleYards:totalDistance,distanceToFrontEdgeYards:greenEdgeDistance};
 
   resultOut.innerHTML=`
-    ${warningMarkup}
     <div class="confirm-card mt10">
-      <div class="confirm-title">${modeTitle}</div>
-      ${modeMessage}
-      <div class="confirm-subtitle">Club: ${recommendation.club}</div>
-      ${selectedLoftMarkup}
-      ${calculatedVsAvailableMarkup}
-      ${ruleCalculationMarkup}
-      <div class="confirm-subtitle">Landing Zone: ${formatDistance(recommendation.minimumLandingDistanceYards)}-${formatDistance(recommendation.maximumLandingDistanceYards)} yards from the ball</div>
-      <div class="confirm-subtitle">Land: ${formatDistance(recommendation.minimumDistanceOntoGreenYards)}-${formatDistance(recommendation.maximumDistanceOntoGreenYards)} yards onto the green</div>
-      <div class="confirm-subtitle">Ideal Landing Point: ${formatDistance(recommendation.preferredLandingDistanceYards)} yards from the ball</div>
-      <div class="confirm-subtitle">${formatDistance(recommendation.preferredDistanceOntoGreenYards)} yards onto the green</div>
-      <div class="confirm-subtitle">Predicted Rollout: ${formatDistance(Math.min(recommendation.minimumRolloutYards,recommendation.maximumRolloutYards))}-${formatDistance(Math.max(recommendation.minimumRolloutYards,recommendation.maximumRolloutYards))} yards toward the hole</div>
+      <div class="confirm-title">RECOMMENDED CHIP</div>
+      <div class="chip-club-label">${recommendation.club}</div>
+      <div class="confirm-title">LANDING ZONE</div>
+      <div class="confirm-subtitle">${formatDistance(recommendation.minimumLandingDistanceYards)}-${formatDistance(recommendation.maximumLandingDistanceYards)} yards from the ball</div>
+      <div class="confirm-subtitle">${formatDistance(recommendation.minimumDistanceOntoGreenYards)}-${formatDistance(recommendation.maximumDistanceOntoGreenYards)} yards onto the green</div>
+      <div class="confirm-title">PREDICTED ROLLOUT</div>
+      <div class="confirm-subtitle">${formatDistance(Math.min(recommendation.minimumRolloutYards,recommendation.maximumRolloutYards))}-${formatDistance(Math.max(recommendation.minimumRolloutYards,recommendation.maximumRolloutYards))} yards toward the hole</div>
     </div>
-    <div class="score-note">Distance to Hole: ${formatDistance(totalDistance)} yards</div>
-    <div class="score-note">Distance to Front Edge: ${formatDistance(greenEdgeDistance)} yards</div>
-    <div class="score-note">Green Speed: ${recommendation.speedLabel}</div>
-    <div class="score-note">Land the ball inside the first three yards of the green and allow it to roll the remaining distance.</div>
-    <div class="score-note">Adjust for slope and green speed.</div>
-    <details class="secondary-details mt8"><summary>Club Loft Reference</summary><div class="score-note mt8">${SHORT_GAME_CLUB_PROFILES.map((profile)=>`${profile.club}: ${profile.minimumLoftDegrees}-${profile.maximumLoftDegrees} deg`).join('<br>')}</div></details>
     ${renderChipScoringCard(activeRarity)}
+    ${renderAroundGreenWhyDetails(recommendation,speedKey,totalDistance,greenEdgeDistance)}
     ${renderAroundGreenResultControls()}
   `;
   attachChipScoringActions();
   document.getElementById('recalculateAroundGreenBtn')?.addEventListener('click',calculateAroundGreen);
   document.getElementById('chooseAnotherShotBtn')?.addEventListener('click',resetDistanceSelection);
+  updatePlaySectionContextVisibility();
   focusNextShotPane();
 }
 
 function selectDistance(distance, profile){
   state.selectedDistance=distance;
   state.currentPutting=null;
+  state.currentAroundGreen=null;
   state.currentChipRecommendation=null;
+  updatePlaySectionContextVisibility();
   const assigned=findAssignedClub(distance,profile.clubs);
   const distanceWindow=calculateDistanceWindow(distance,profile.rarity);
   const shotReward=calculateShotReward(profile.rarity);
@@ -1446,12 +1552,14 @@ function renderPuttingEntry(holeNumber){
   if(!state.active) return;
   const safeHole=Number.isInteger(holeNumber)&&holeNumber>=1&&holeNumber<=18?holeNumber:inferPuttingHoleNumber();
   state.currentPutting={holeNumber:safeHole};
+  state.currentAroundGreen=null;
   state.currentShot=null;
   state.currentChipRecommendation=null;
   state.selectedDistance=null;
   els.distanceGrid.classList.add('hidden');
   els.shotConfirmOut.innerHTML='';
   els.playResetBtn.classList.remove('hidden');
+  updatePlaySectionContextVisibility();
   els.playOut.innerHTML=`
     <div class="target-window-card">
       <h3>PUTTS TAKEN</h3>
@@ -1593,10 +1701,12 @@ function resetDistanceSelection(){
   state.selectedDistance=null;
   state.currentShot=null;
   state.currentPutting=null;
+  state.currentAroundGreen=null;
   state.currentChipRecommendation=null;
   els.distanceGrid.classList.remove('hidden');
   els.playOut.innerHTML='';
   els.playResetBtn.classList.add('hidden');
+  updatePlaySectionContextVisibility();
   focusNextShotPane();
 }
 
@@ -1741,6 +1851,7 @@ function resetRound(){
   if(!ok) return;
   state.active=null;
   state.progressVisible=false;
+  state.currentAroundGreen=null;
   saveRound();
   setPendingOptions(null);
   renderState();
@@ -1749,6 +1860,7 @@ function resetRound(){
   els.distanceGrid.classList.remove('hidden');
   els.playResetBtn.classList.add('hidden');
   els.shotConfirmOut.innerHTML='';
+  updatePlaySectionContextVisibility();
   els.liveStatus.textContent='Round reset. Randomize My Round is available again.';
 }
 
