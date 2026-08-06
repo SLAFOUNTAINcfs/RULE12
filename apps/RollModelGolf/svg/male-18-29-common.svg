@@ -30,7 +30,7 @@
     <rect x="24" y="406" width="372" height="112" rx="14" fill="#141D2A" stroke="#2A3445"/>
     <text x="40" y="434" class="head">COMMON DISTANCE WINDOW</text>
     <text x="40" y="462" class="metaSmall">±25% of required total distance</text>
-    <text x="40" y="486" class="metaSmall">0.20 strokes per successful hit</text>
+    <text x="40" y="486" class="metaSmall">0.10 strokes per successful hit</text>
     <text x="40" y="510" class="metaSmall">FRONT-TO-BACK DISTANCE WINDOW</text>
   </g>
   <g>

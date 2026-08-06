@@ -613,7 +613,7 @@ function renderState(){
   els.activeSection.classList.toggle('hidden',!hasActive);
   els.playSection.classList.toggle('hidden',!hasActive);
   els.bagSection.classList.toggle('hidden',!hasActive);
-  els.rulesSection.classList.toggle('hidden',!hasActive);
+  els.rulesSection.classList.toggle('hidden',hasActive);
 
   if(!hasActive){
     els.activeMeta.innerHTML='';
