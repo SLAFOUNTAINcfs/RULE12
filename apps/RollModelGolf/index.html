@@ -1338,15 +1338,15 @@ function calculateAroundGreen(){
       ${ruleCalculationMarkup}
       <div class="confirm-subtitle">Landing Zone: ${formatDistance(recommendation.minimumLandingDistanceYards)}-${formatDistance(recommendation.maximumLandingDistanceYards)} yards from the ball</div>
       <div class="confirm-subtitle">Land: ${formatDistance(recommendation.minimumDistanceOntoGreenYards)}-${formatDistance(recommendation.maximumDistanceOntoGreenYards)} yards onto the green</div>
-      <div class="confirm-subtitle">Preferred Landing Point: ${formatDistance(recommendation.preferredLandingDistanceYards)} yards from the ball</div>
+      <div class="confirm-subtitle">Ideal Landing Point: ${formatDistance(recommendation.preferredLandingDistanceYards)} yards from the ball</div>
       <div class="confirm-subtitle">${formatDistance(recommendation.preferredDistanceOntoGreenYards)} yards onto the green</div>
-      <div class="confirm-subtitle">Expected Roll: ${formatDistance(Math.min(recommendation.minimumRolloutYards,recommendation.maximumRolloutYards))}-${formatDistance(Math.max(recommendation.minimumRolloutYards,recommendation.maximumRolloutYards))} yards toward the hole</div>
+      <div class="confirm-subtitle">Predicted Rollout: ${formatDistance(Math.min(recommendation.minimumRolloutYards,recommendation.maximumRolloutYards))}-${formatDistance(Math.max(recommendation.minimumRolloutYards,recommendation.maximumRolloutYards))} yards toward the hole</div>
     </div>
     <div class="score-note">Distance to Hole: ${formatDistance(totalDistance)} yards</div>
     <div class="score-note">Distance to Front Edge: ${formatDistance(greenEdgeDistance)} yards</div>
     <div class="score-note">Green Speed: ${recommendation.speedLabel}</div>
     <div class="score-note">Land the ball inside the first three yards of the green and allow it to roll the remaining distance.</div>
-    <div class="score-note">Consider uphill, downhill, and side slope before choosing your final shot.</div>
+    <div class="score-note">Adjust for slope and green speed.</div>
     <details class="secondary-details mt8"><summary>Club Loft Reference</summary><div class="score-note mt8">${SHORT_GAME_CLUB_PROFILES.map((profile)=>`${profile.club}: ${profile.minimumLoftDegrees}-${profile.maximumLoftDegrees} deg`).join('<br>')}</div></details>
     ${renderChipScoringCard(activeRarity)}
     ${renderAroundGreenResultControls()}
