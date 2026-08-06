@@ -186,7 +186,7 @@ th{background:var(--surface);color:var(--muted)}
     <p class="result-tip">Tap the card to zoom on mobile.</p>
   </section>
 
-  <section id="playSection" class="card no-print hidden">
+  <section id="playSection" class="card no-print hidden" tabindex="-1">
     <h2 class="next-shot-title">NEXT SHOT</h2>
     <div class="target-selector-card mt8">
       <button id="puttingBtn" type="button" class="btn-secondary">Putting</button>
@@ -341,6 +341,13 @@ function openZoom(src, alt){
 function closeZoom(){
   els.zoomOverlay.classList.remove('open');
   els.zoomOverlay.setAttribute('aria-hidden','true');
+}
+
+function focusNextShotPane(){
+  if(!els.playSection||els.playSection.classList.contains('hidden')) return;
+  const prefersReducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  els.playSection.scrollIntoView({behavior:prefersReducedMotion?'auto':'smooth',block:'start'});
+  els.playSection.focus({preventScroll:true});
 }
 
 function secureIndex(max){
@@ -1086,6 +1093,7 @@ function openAroundGreenCalculator(){
     });
   });
   document.getElementById('calcAroundGreenBtn')?.addEventListener('click',calculateAroundGreen);
+  focusNextShotPane();
 }
 
 function renderAroundGreenResultControls(){
@@ -1213,6 +1221,7 @@ function renderChipConfirmation(result){
   });
   document.getElementById('undoLastChipBtn')?.addEventListener('click',()=>undoLastChipResult(result.id));
   document.getElementById('recordZeroPuttsBtn')?.addEventListener('click',()=>recordZeroPuttForHole(result.holeNumber));
+  focusNextShotPane();
 }
 
 function calculateAroundGreen(){
@@ -1261,6 +1270,7 @@ function calculateAroundGreen(){
     `;
     document.getElementById('recalculateAroundGreenBtn')?.addEventListener('click',calculateAroundGreen);
     document.getElementById('chooseAnotherShotBtn')?.addEventListener('click',resetDistanceSelection);
+    focusNextShotPane();
     return;
   }
 
@@ -1291,6 +1301,7 @@ function calculateAroundGreen(){
     attachChipScoringActions();
     document.getElementById('recalculateAroundGreenBtn')?.addEventListener('click',calculateAroundGreen);
     document.getElementById('chooseAnotherShotBtn')?.addEventListener('click',resetDistanceSelection);
+    focusNextShotPane();
     return;
   }
 
@@ -1343,6 +1354,7 @@ function calculateAroundGreen(){
   attachChipScoringActions();
   document.getElementById('recalculateAroundGreenBtn')?.addEventListener('click',calculateAroundGreen);
   document.getElementById('chooseAnotherShotBtn')?.addEventListener('click',resetDistanceSelection);
+  focusNextShotPane();
 }
 
 function selectDistance(distance, profile){
@@ -1406,6 +1418,7 @@ function selectDistance(distance, profile){
   document.getElementById('hitTargetZoneBtn')?.addEventListener('click',()=>recordShotResult(true));
   document.getElementById('missedTargetZoneBtn')?.addEventListener('click',()=>recordShotResult(false));
   els.playResetBtn.classList.remove('hidden');
+  focusNextShotPane();
 }
 
 function buildShotResultBase(){
@@ -1466,6 +1479,7 @@ function renderPuttingEntry(holeNumber){
       recordPuttingResult(holeInput,puttsTaken);
     });
   });
+  focusNextShotPane();
 }
 
 function openPuttingEntry(preferredHoleNumber){
@@ -1521,6 +1535,7 @@ function renderPuttingConfirmation(result){
   });
   document.getElementById('changePuttingBtn')?.addEventListener('click',()=>openPuttingEntry(result.holeNumber));
   els.liveStatus.textContent=`Putting recorded for Hole ${result.holeNumber}.`;
+  focusNextShotPane();
 }
 
 function recordShotResult(hitDistanceWindow){
@@ -1555,6 +1570,7 @@ function renderShotConfirmation(shotResult){
     if(firstDistanceButton) firstDistanceButton.focus();
   });
   document.getElementById('undoLastShotBtn')?.addEventListener('click',()=>undoLastShotResult(shotResult.id));
+  focusNextShotPane();
 }
 
 function undoLastShotResult(shotId){
@@ -1581,6 +1597,7 @@ function resetDistanceSelection(){
   els.distanceGrid.classList.remove('hidden');
   els.playOut.innerHTML='';
   els.playResetBtn.classList.add('hidden');
+  focusNextShotPane();
 }
 
 function setPendingOptions(profiles){
@@ -1737,7 +1754,7 @@ function resetRound(){
 
 function resumeRound(){
   renderState();
-  els.playSection.scrollIntoView({behavior:(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)?'auto':'smooth'});
+  focusNextShotPane();
   els.liveStatus.textContent='Resumed locked round.';
 }
 
