@@ -15,11 +15,19 @@ const RATIOS={Male:[1,.885,.825,.780,.745,.710,.675,.640,.605,.560,.515,.470,.42
 const GAPS={slow:[7,7,4,4,4,4,4,4,4,4,4,5,5,5],moderate:[10,10,6,6,6,6,6,6,7,7,7,8,8,8],fast:[14,14,8,8,8,8,8,8,9,9,9,10,10,10],elite:[18,18,10,10,10,10,10,10,11,11,11,12,12,12]};
 const PERF={Common:'Developing Golfer',Rare:'Established Golfer',Epic:'Low-Handicap Golfer'};
 const SOURCES=['Arccos 2026 amateur driving distance','TrackMan 2023 tour club-gap shape','PGA TOUR 2026 driver benchmark','PGA TOUR Champions 2026 driver benchmark'];
+const TEE_BANDS=[
+  {maximumYardage:4000,teeColor:'Red',teeLabel:'Red Tees',teeCategory:'Forward'},
+  {maximumYardage:5000,teeColor:'Gold/Yellow',teeLabel:'Gold / Yellow Tees',teeCategory:'Forward / Senior'},
+  {maximumYardage:5800,teeColor:'White',teeLabel:'White Tees',teeCategory:'Standard'},
+  {maximumYardage:6500,teeColor:'Blue',teeLabel:'Blue Tees',teeCategory:'Championship'},
+  {maximumYardage:Infinity,teeColor:'Black',teeLabel:'Black Tees',teeCategory:'Back / Elite'}
+];
 function band(d){return d<150?'slow':d<210?'moderate':d<270?'fast':'elite'}
 function elite(die){return die===1?'Elite Junior':die<4?'Tour Benchmark':die===4?'Elite Veteran':die===5?'Elite Senior':'Elite Age-Group Golfer'}
 function buildClubs(gender,driver){const ratios=RATIOS[gender],gaps=GAPS[band(driver)],clubs={Driver:driver};for(let i=1;i<CLUBS.length;i++)clubs[CLUBS[i]]=Math.max(1,Math.min(Math.round(driver*ratios[i]),clubs[CLUBS[i-1]]-gaps[i-1]));return clubs}
-function makeProfile(gender,age,rarity,rarityIndex){const [die,label,slug,archetypeId,archetypeName,archetypeSummary]=age;const driver=ANCHORS[gender][label][rarityIndex],clubs=buildClubs(gender,driver),performanceLabel=rarity==='Legendary'?elite(die):PERF[rarity];const id=`${gender.toLowerCase()}-${slug}-${rarity.toLowerCase()}`;return{id,gender,coinResult:gender==='Female'?'Heads':'Tails',dieRoll:die,ageGroup:label,archetypeId,archetypeName,archetypeSummary,rarity,rarityTitle:performanceLabel,performanceLabel,characterDisplayName:`${rarity} ${archetypeName}`,teeYardage:Math.round((clubs['7-Iron']*38)/50)*50,distanceType:'total',distanceBasis:'Modeled total-distance gameplay profile',distanceModelVersion:MODEL_VERSION,sourceCategories:SOURCES,clubs,distanceBand:band(driver),svg:`svg/${id}.svg`}}
+function teeRecommendation(teeYardage){return TEE_BANDS.find((tee)=>teeYardage<=tee.maximumYardage)||TEE_BANDS.at(-1)}
+function makeProfile(gender,age,rarity,rarityIndex){const [die,label,slug,archetypeId,archetypeName,archetypeSummary]=age;const driver=ANCHORS[gender][label][rarityIndex],clubs=buildClubs(gender,driver),performanceLabel=rarity==='Legendary'?elite(die):PERF[rarity];const id=`${gender.toLowerCase()}-${slug}-${rarity.toLowerCase()}`;const teeYardage=Math.round((clubs['7-Iron']*38)/50)*50;const tee=teeRecommendation(teeYardage);return{id,gender,coinResult:gender==='Female'?'Heads':'Tails',dieRoll:die,ageGroup:label,archetypeId,archetypeName,archetypeSummary,rarity,rarityTitle:performanceLabel,performanceLabel,characterDisplayName:`${rarity} ${archetypeName}`,teeYardage,teeColor:tee.teeColor,teeLabel:tee.teeLabel,teeCategory:tee.teeCategory,distanceType:'total',distanceBasis:'Modeled total-distance gameplay profile',distanceModelVersion:MODEL_VERSION,sourceCategories:SOURCES,clubs,distanceBand:band(driver),svg:`svg/${id}.svg`}}
 const profiles=[];for(const gender of ['Female','Male'])for(const age of AGES)RARITIES.forEach((rarity,index)=>profiles.push(makeProfile(gender,age,rarity,index)));
-for(const p of profiles){for(let i=1;i<CLUBS.length;i++)if(p.clubs[CLUBS[i-1]]<=p.clubs[CLUBS[i]])throw new Error(`${p.id}: invalid club ladder`)}
-window.ROLL_PLAY_RESULTS={game:'Roll Play Golf',subtitle:'A Golf RPG',tagline:'Roll a golfer role. Choose a rarity. Play as that character.',distanceType:'total',distanceModelVersion:MODEL_VERSION,version:5,profiles};
+for(const p of profiles){for(let i=1;i<CLUBS.length;i++)if(p.clubs[CLUBS[i-1]]<=p.clubs[CLUBS[i]])throw new Error(`${p.id}: invalid club ladder`);if(!p.teeLabel)throw new Error(`${p.id}: missing tee recommendation`)}
+window.ROLL_PLAY_RESULTS={game:'Roll Play Golf',subtitle:'A Golf RPG',tagline:'Roll a golfer role. Choose a rarity. Play as that character.',distanceType:'total',distanceModelVersion:MODEL_VERSION,teeColorModel:'red<=4000, gold/yellow<=5000, white<=5800, blue<=6500, black>6500',version:6,profiles};
 })();
