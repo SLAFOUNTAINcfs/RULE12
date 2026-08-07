@@ -6,7 +6,7 @@ Roll Play Golf randomizes one golfer role, reveals three unique rarity versions 
 
 1. Roll one gender and age archetype.
 2. Choose Common, Rare, Epic, or Legendary from three weighted rarity choices.
-3. Play using that character's modeled club distances.
+3. Play using that character's modeled club distances and recommended tee color.
 4. Complete distance, short-game, and putting quests.
 5. Subtract earned rewards from gross strokes for the Roll Play Score.
 
@@ -52,7 +52,35 @@ The model enforces descending club distances and minimum adjacent gaps. The repa
 | SW | 103 yd |
 | LW | 89 yd |
 
-Recommended tee yardage: 6,350 yards.
+Its internal modeled course length is 6,350 yards, which is presented to the player as **Blue Tees**.
+
+## Tee-color recommendations
+
+The app keeps the modeled course-length value internally and presents a simple tee color to the player:
+
+| Modeled course length | Player-facing tee |
+|---|---|
+| 4,000 yd or less | Red Tees |
+| 4,050–5,000 yd | Gold / Yellow Tees |
+| 5,050–5,800 yd | White Tees |
+| 5,850–6,500 yd | Blue Tees |
+| Above 6,500 yd | Black Tees |
+
+These labels follow the game's general forward-to-back tee progression. Actual golf-course tee colors vary, so players should use the equivalent forward, standard, championship, or back tee when a course uses different colors.
+
+## Printable physical character cards
+
+`Print Character Cards` renders a dedicated poker-card version of every character card:
+
+- Finished card size: **2.5 × 3.5 inches**
+- Paper: **US Letter, portrait**
+- Layout: **3 columns × 3 rows**
+- Cards per sheet: **9**
+- Full 48-card set: **6 sheets**
+- Print at **100% / Actual Size**
+- Thin card outlines act as cutting guides
+
+The printable card is generated from the same live profile data as gameplay and includes the character, rarity, tee color, distance quest, all club targets, putting quest, and short-game quest.
 
 ## Mechanics preserved
 
@@ -71,9 +99,10 @@ Character cards are rendered dynamically from the active profile data, preventin
 ## Files
 
 - `index.html` — application shell
-- `styles.css` — responsive presentation
-- `profile-model.js` — character profiles and distance model
+- `styles.css` — responsive and print presentation
+- `profile-model.js` — character profiles, distance model, and tee-color model
 - `app-core.js` — state, RPG roll, scoring summaries, persistence
 - `app-ui.js` — cards, scorecard, hole navigator, distance quests
 - `app-actions.js` — short game, putting, round controls, initialization
+- `print-and-tee.js` — poker-size print cards and tee-color display integration
 - `DISTANCE_MODEL_AUDIT.md` — validation summary and anchor table
